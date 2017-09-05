@@ -1,6 +1,6 @@
 <?php
 
-class FormManager
+class Forms
 {
     public $elementsOfForm = [
         'user_form' => [
@@ -78,4 +78,59 @@ class FormManager
         return $filteredResult;
     }
 
+    public function createHtmlBlock($head, $inputForm, $btn1 ,$btn2)
+    {
+        $structureForPage = "
+            <div class = 'editBlock' id = 'editBlock'>
+                <form method = 'post' action = 'index.php'>
+                <div class = 'editBlockHead' id = 'editBlockHead'>
+                    <h2>
+                        $head
+                    </h2>
+                </div>
+                $inputForm
+                <br/>
+                <input class = 'button' type = 'submit' name = '".$btn1."Btn' value = '$btn1'/>
+                <a href = 'index.php' class='button'>$btn2</a>
+                </form>
+            </div>";
+        return $structureForPage;
+    }
+
+    public function createHtmlTable($tableHeader)
+    {
+        $structureTable = "
+            <div class = 'tableBlock' id = 'tableBlock'>
+                <table cellpadding = '10' id = 'table'>
+                    <tr>
+                    <?php echo $tableHeader;?>
+                    </tr>
+                
+                </table>
+            </div>
+            <br/>";
+
+        echo $structureTable;
+    }
+    
 }
+
+
+/*
+<?php
+                if (!empty($filteredResult)) {
+                    foreach ($filteredResult as $key => $value) {
+                ?>
+                        <tr id = <?php echo $value['id']; ?> >
+                            <td><?php echo $value['firstName']; ?></td>
+                            <td><?php echo $value['lastName']; ?></td>
+                            <td><?php echo $value['email']; ?></td>
+                            <td><?php echo $value['phone']; ?></td>
+                            <td><?php echo createBtn('edit', $value['id']); ?></td>
+                            <td><?php echo createBtn('delete', $value['id']); ?></td>
+                        </tr>
+                    <?php
+                    }
+                }
+                ?>
+                */

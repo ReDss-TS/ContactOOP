@@ -16,18 +16,17 @@ if (isset($_POST['enterBtn'])) {
     $arrayData['user_login'] = $_POST['user_login'];
     $arrayData['user_pass'] = $_POST['user_pass'];
 
-    $authentication = new DBManager();
+    $authentication = new DBM();
     $authentication->authentication($arrayData['user_login'], $arrayData['user_pass']);
 }
 
-$formForLogin = new FormManager();
-$formForLogin->buildForm('user_form', $dataForUpdate, $selectedRadio, $listWithInputError);
-var_dump($formForLogin);
+$formForLogin = new Forms();
+$form = $formForLogin->buildForm('user_form', $dataForUpdate, $selectedRadio, $listWithInputError);
 ?>
 
 <div class = "editBlock" id = "editBlock">
     <form method = "post" action = "login.php">
-        <?php echo $formForLogin; ?>
+        <?php echo $form; ?>
         <br/>
         <input class = "button" type = "submit" name = "enterBtn" value = "Enter"/>
         <a href = "register.php" class="button">Register</a>

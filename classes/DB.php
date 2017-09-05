@@ -1,6 +1,6 @@
 <?php
 
-class DBManager
+class DB
 {
     public $server = 'localhost';
     public $user   = 'admin';
@@ -8,14 +8,20 @@ class DBManager
     public $db     = 'contact_record';
     public $dbCon;
 
-    function __construct()
+    /*function __destruct()
+    {
+        $this->close();
+    }*/
+
+    function connect()
     {
         $this->dbCon = mysqli_connect($this->server, $this->user, $this->passwd, $this->db);
     }
 
-    function __destruct()
+    function escapeString($value)
     {
-        $this->close();
+        $escapeData = mysqli_real_escape_string($this->dbCon, $value);
+        return $escapeData;
     }
 
     /*function selectMainPageData()
@@ -35,7 +41,7 @@ class DBManager
 
     function selectFromDB($sqlQuery)
     {
-        $result = $this->query($sqlQuery);
+        $result = $this->dbCon->query($sqlQuery);
         if ($result->num_rows > 0) {
             while ($row =  $result->fetch_assoc()) {
                 $array[] = $row;
@@ -46,30 +52,6 @@ class DBManager
         }
     }
 
-    function authentication($ulogin, $upass)
-    {
-        $upass = md5($upass);
-        $dataForAuthent['login'] = $ulogin;
-        $dataForAuthent['pass'] = $upass;
-        //$data = escapeData($mysql, $dataForAuthent);
-        $selectQuery = "SELECT * FROM users where login ='" . $dataForAuthent['login'] . "'";
-
-        $result = selectFromDB($selectQuery);
-
-        if (!empty($result)) {
-            foreach ($result as $key => $value) {
-                if ($value['pass'] === $upass) {
-                    $_SESSION['userId'] = $value['id'];
-                    $_SESSION['login'] = $value['login'];
-                    header("Location: index.php");
-                } else {
-                    echo "Password is incorrect!";
-                }
-            }
-        } else {
-             echo "Login is incorrect!";
-        }
-    }
 
 }
 
