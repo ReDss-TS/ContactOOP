@@ -26,4 +26,24 @@ class Table
 		return $this->tableHeader;
     }
 
+    function tableData($data)
+    {
+        $Contacts = '';
+        $Btn = new Forms();
+        if (!empty($data)) {
+            foreach ($data as $key => $value) {
+                $Contacts .= "
+                <tr id = " . $value['id'] . ">
+                    <td>" . $value['firstName'] . " </td>
+                    <td>" . $value['lastName'] . " </td>
+                    <td>" . $value['email'] . " </td>
+                    <td>" . $value['phone'] . " </td>
+                    <td>" . $Btn -> createBtn('edit', $value['id']) . " </td>
+                    <td>" . $Btn -> createBtn('delete', $value['id']) . " </td>
+                </tr> ";
+            }
+        }
+        return $Contacts;
+    }
+
 }

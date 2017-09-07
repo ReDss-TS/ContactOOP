@@ -97,15 +97,17 @@ class Forms
         return $structureForPage;
     }
 
-    public function createHtmlTable($tableHeader)
+    public function createHtmlTable($tableHeader, $tableData)
     {
+        $Contacts = new Table();
+        $data = $Contacts -> tableData($tableData);
         $structureTable = "
             <div class = 'tableBlock' id = 'tableBlock'>
                 <table cellpadding = '10' id = 'table'>
                     <tr>
-                    <?php echo $tableHeader;?>
+                    $tableHeader
                     </tr>
-                
+                    $data
                 </table>
             </div>
             <br/>";
@@ -113,24 +115,11 @@ class Forms
         echo $structureTable;
     }
     
+    function createBtn($typeBtn, $idLine)
+    {
+        return "<form method = \"post\" action = " . $typeBtn . ".php>
+            <input type= \"hidden\" name = \"idLine\" value = " . $idLine . " />
+            <input class = " . $typeBtn . " Btn type=\"submit\" name = " . $typeBtn . " Btn value = " . $typeBtn . " />
+            </form>";
+    }
 }
-
-
-/*
-<?php
-                if (!empty($filteredResult)) {
-                    foreach ($filteredResult as $key => $value) {
-                ?>
-                        <tr id = <?php echo $value['id']; ?> >
-                            <td><?php echo $value['firstName']; ?></td>
-                            <td><?php echo $value['lastName']; ?></td>
-                            <td><?php echo $value['email']; ?></td>
-                            <td><?php echo $value['phone']; ?></td>
-                            <td><?php echo createBtn('edit', $value['id']); ?></td>
-                            <td><?php echo createBtn('delete', $value['id']); ?></td>
-                        </tr>
-                    <?php
-                    }
-                }
-                ?>
-                */

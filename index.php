@@ -8,26 +8,48 @@ function __autoload($className)
     require_once("classes/$className.php");
 }
 
+session_start();
+$dataForUpdate = array();
+$selectedRadio = 0;
+$listWithInputError = '';
+
 $sessionManager = new Sessions();
-$sessionManager -> showMessages();
-$sessionManager -> unsetMessages();
+$login = $sessionManager -> issetLogin();
 
+if ($login == 'yes') {
+	$data = new Table();
+	$tableHeaders = $data -> tableHeaders();
 
+	$Queries = new Queries();
+    $selectDataForMainPage = $Queries -> selectDataForMainPage();
 
-if (isset($_POST['EnterBtn'])) {
-    $arrayData['user_login'] = $_POST['user_login'];
-    $arrayData['user_pass'] = $_POST['user_pass'];
+	$selectContacts = new DB();
+	$selectContacts -> connect();
+	$result = $selectContacts -> selectFromDB($selectDataForMainPage);
 
-    $authentication = new Auth();
-    $authentication->authentication($arrayData['user_login'], $arrayData['user_pass']);
+	$Filter = new Filters();
+	$sanitizeDate = $Filter -> sanitizeSpecialChars($result);
+
+	$tableForData = new Forms();
+	$tableForData -> createHtmlTable($tableHeaders, $sanitizeDate);
+
+} else {
+	$formForLogin = new Forms();
+	$form = $formForLogin->buildForm('user_form', $dataForUpdate, $selectedRadio, $listWithInputError);
+	$page = $formForLogin->createHtmlBlock('Registration', $form, 'Enter', 'Register');
+	echo $page;
+
+	$sessionManager -> showMessages();
+	$sessionManager -> unsetMessages();
 }
 
-$allData = new Table();
-$tableHeaders = $allData -> tableHeaders();
+if (isset($_POST['EnterBtn'])) {
+   	$arrayData['user_login'] = $_POST['user_login'];
+   	$arrayData['user_pass'] = $_POST['user_pass'];
+   	$authentication = new Auth();
+   	$authentication->authentication($arrayData['user_login'], $arrayData['user_pass']);
+}
 
-$tableForData = new Forms();
-$tableWithData = $tableForData -> createHtmlTable($tableHeaders);
-
-$sessionManager -> logout();
+//$sessionManager -> logout();
 
 include_once 'includes/footer.php';

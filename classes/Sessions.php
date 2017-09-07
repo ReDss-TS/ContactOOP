@@ -4,19 +4,16 @@ class Sessions
 {
 	function __construct()
     {	
-    	session_start();
-    	$dataForUpdate = array();
-		$selectedRadio = 0;
-		$listWithInputError = '';
-
-        if (!(isset($_SESSION['login']))) {
-            $formForLogin = new Forms();
-			$form = $formForLogin->buildForm('user_form', $dataForUpdate, $selectedRadio, $listWithInputError);
-			$page = $formForLogin->createHtmlBlock('Registration', $form, 'Enter', 'Register');
-			echo $page;
-        }
+        
     }
 
+    function issetLogin() 
+    {
+    	if (isset($_SESSION['login'])) {
+        	return 'yes';
+        }
+        return 'no';
+    }
 
 	function recordMessageInSession($addressMsg, $msg)
 	{
