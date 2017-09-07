@@ -1,16 +1,20 @@
 <?php
 
-class Validate
+class Validate extends DB
 {
+    public $ValidateData = array();
+
+    function __construct()
+    {   
+        parent::__construct();
+    }
+
 	function escapeData($data)
 	{
-		$conn = new DB();
-		$conn -> connect();
-    	$array = array();
     	foreach ($data as $key => $value) {
-        	$val = $conn -> escapeString($value);
-        	$array[$key] = $val;
+        	$val = mysqli_real_escape_string($this->dbCon, $value);
+        	$this->ValidateData[$key] = $val;
     	}
-    	return $array;
+    	return $this->ValidateData;
 	}
 }

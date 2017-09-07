@@ -15,9 +15,8 @@ class Auth
 	    $selectQuery = "SELECT * FROM users where login ='" . $escapeData['login'] . "'";
 
 
-	    $selectLogin = new DB();
-		$selectLogin -> connect();
-		$result = $selectLogin -> selectFromDB($selectQuery);
+	    $dbase = Db::getInstance();
+		$result = $dbase -> selectFromDB($selectQuery);
 
 		$MessageInSession = new Sessions();
 

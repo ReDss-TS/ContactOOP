@@ -27,7 +27,7 @@ class Forms
     public function buildForm($typeOfForm, $inputValues, $numRadio, $listWithErrors)
     {
         if (!empty($inputValues)) {
-            $inputValues = sanitizeSpecialChars($inputValues);
+            $inputValues = $filter -> sanitizeSpecialChars($inputValues);
         }
         //structure of form for insert data
         $structureForForm = '';
@@ -51,7 +51,7 @@ class Forms
         return $structureForForm;
     }
 
-    public function addRadioBtn($val, $checkValue)
+    private function addRadioBtn($val, $checkValue)
     {
         $radioNum = 0;
         switch ($val) {
@@ -68,14 +68,6 @@ class Forms
         $isChecked = ($radioNum == $checkValue) ? 'checked' : '';
         $formRadio = "<input id = \"idPhone$radioNum\" type = \"radio\" name = \"bestPhone\" value = $radioNum $isChecked>";
         return $formRadio;
-    }
-
-    public function sanitizeSpecialChars($data)
-    {
-        foreach ($data as $key => $value) {
-            $filteredResult[$key] = filter_var($value, FILTER_SANITIZE_SPECIAL_CHARS);
-        }
-        return $filteredResult;
     }
 
     public function createHtmlBlock($head, $inputForm, $btn1 ,$btn2)

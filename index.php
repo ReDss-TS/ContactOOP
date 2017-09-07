@@ -23,16 +23,16 @@ if ($login == 'yes') {
 	$Queries = new Queries();
     $selectDataForMainPage = $Queries -> selectDataForMainPage();
 
-	$selectContacts = new DB();
-	$selectContacts -> connect();
-	$result = $selectContacts -> selectFromDB($selectDataForMainPage);
+	$dbase = Db::getInstance();
+	$result = $dbase -> selectFromDB($selectDataForMainPage);
 
-	$Filter = new Filters();
-	$sanitizeDate = $Filter -> sanitizeSpecialChars($result);
+	$filter = new Filters();
+	$sanitizeDate = $filter -> sanitizeSpecialChars($result);
 
 	$tableForData = new Forms();
 	$tableForData -> createHtmlTable($tableHeaders, $sanitizeDate);
 
+	//$sessionManager -> logout();
 } else {
 	$formForLogin = new Forms();
 	$form = $formForLogin->buildForm('user_form', $dataForUpdate, $selectedRadio, $listWithInputError);
