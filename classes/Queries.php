@@ -2,6 +2,28 @@
 
 class Queries
 {
+
+    private static $instance;
+
+    private function __clone()
+    {
+
+    }
+
+    private function __wakeup()
+    {
+
+    }
+
+    public static function getInstance()
+    {
+        if (empty(self::$instance)) {
+            self::$instance = new self();
+        }
+        return self::$instance;
+    }
+
+
 	function selectDataForMainPage()
 	{
         $userId = $_SESSION['userId'];
@@ -12,5 +34,11 @@ class Queries
                                         WHERE contact_list.userId      = $userId
                                         AND contact_list.favoritePhone = contact_phones.phoneType";
 	    return $selectQuery;
+    }
+
+    function selectPasswordByLogin($login)
+    {
+        $selectQuery = "SELECT * FROM users where login = '$login'";
+        return $selectQuery;
     }
 }

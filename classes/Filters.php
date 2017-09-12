@@ -2,8 +2,6 @@
 
 class Filters
 {   
-    public $filteredResult = [];
-
 	function sanitizeSpecialChars($data)
 	{
         if (!empty($data)) {

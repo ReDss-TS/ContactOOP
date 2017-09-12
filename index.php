@@ -1,7 +1,5 @@
 <?php
 
-include_once 'includes/headHtml.php';
-
 function __autoload($className)
 {
     //$className = str_replace("..", "", $className);
@@ -9,47 +7,50 @@ function __autoload($className)
 }
 
 session_start();
+$bodyPage = '';
 $dataForUpdate = array();
 $selectedRadio = 0;
 $listWithInputError = '';
 
-$sessionManager = new Sessions();
-$login = $sessionManager -> issetLogin();
+$sessionManager = Sessions::getInstance();
+$isSignIn = $sessionManager -> issetLogin();
 
-if ($login == 'yes') {
-	$data = new Table();
-	$tableHeaders = $data -> tableHeaders();
+if ($isSignIn == 'yes') {
+    $data = new Table();
+    $tableHeaders = $data -> tableHeaders();
 
-	$Queries = new Queries();
-    $selectDataForMainPage = $Queries -> selectDataForMainPage();
+    $selectDataForMainPage = Queries::getInstance() -> selectDataForMainPage();
 
-	$dbase = Db::getInstance();
-	$result = $dbase -> selectFromDB($selectDataForMainPage);
+    $dbase = Db::getInstance();
+    $result = $dbase -> selectFromDB($selectDataForMainPage);
 
-	$filter = new Filters();
-	$sanitizeDate = $filter -> sanitizeSpecialChars($result);
+    $filter = new Filters();
+    $sanitizeDate = $filter -> sanitizeSpecialChars($result);
 
-	$tableForData = new Forms();
-	$tableForData -> createHtmlTable($tableHeaders, $sanitizeDate);
+    $tableForData = new Forms();
+    $DataTable = $tableForData -> createHtmlTable($tableHeaders, $sanitizeDate);
 
-	//$sessionManager -> logout();
+    $bodyPage .= $DataTable;
+    //$sessionManager -> logout();
 } else {
-	$formForLogin = new Forms();
-	$form = $formForLogin->buildForm('user_form', $dataForUpdate, $selectedRadio, $listWithInputError);
-	$page = $formForLogin->createHtmlBlock('Registration', $form, 'Enter', 'Register');
-	echo $page;
+    $formForLogin = new FormForLogin();
+    $form = $formForLogin->buildForm($listWithInputError);
+    $loginPage = HtmlElements::getInstance()->createHtmlBlock('Login', $form, 'Enter', 'Register');
 
-	$sessionManager -> showMessages();
-	$sessionManager -> unsetMessages();
+    $bodyPage .= $sessionManager -> showMessages();
+    $sessionManager -> unsetMessages();
+    $bodyPage .= $loginPage;
 }
 
 if (isset($_POST['EnterBtn'])) {
-   	$arrayData['user_login'] = $_POST['user_login'];
-   	$arrayData['user_pass'] = $_POST['user_pass'];
-   	$authentication = new Auth();
-   	$authentication->authentication($arrayData['user_login'], $arrayData['user_pass']);
+       $arrayData['user_login'] = $_POST['user_login'];
+       $arrayData['user_pass'] = $_POST['user_pass'];
+       $authentication = new Auth();
+       $auth = $authentication->authentication($arrayData['user_login'], $arrayData['user_pass']);
+       is_array($auth) ? $sessionManager->authenticationToSession($auth) : $sessionManager->recordMessageInSession('auth', $auth);
 }
 
 //$sessionManager -> logout();
-
+include_once 'includes/headHtml.php';
+echo $bodyPage;
 include_once 'includes/footer.php';

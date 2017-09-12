@@ -1,37 +1,32 @@
 <?php
 
 class Auth
-{
-	function authentication($ulogin, $upass)
-	{
-	    $upass = md5($upass);
-	    $dataForAuthent = array();
-	    $dataForAuthent['login'] = $ulogin;
-	    $dataForAuthent['pass'] = $upass;
+{    
+    function authentication($ulogin, $upass)
+    {    
+        $upass = md5($upass);
+        $selectLogin = $this->createQuery($ulogin, $upass);
+        $resultQuery = Db::getInstance()->selectFromDB($selectLogin);
+        if (!empty($resultQuery)) {
+            foreach ($resultQuery as $key => $value) {
+                if ($value['pass'] === $upass) {
+                    return $resultQuery;
+                }
+                return "Password is incorrect!";
+            }
+        }
+        return "Login is incorrect";
+    }
 
-	    $data = new Validate();
-	    $escapeData = $data -> escapeData($dataForAuthent);
+    function createQuery($ulogin, $upass)
+    {
+        $dataForAuthent = array();
+        $dataForAuthent['login'] = $ulogin;
+        $dataForAuthent['pass'] = $upass;
 
-	    $selectQuery = "SELECT * FROM users where login ='" . $escapeData['login'] . "'";
+        $escapeData = Db::getInstance()->escapeData($dataForAuthent);
+        $selectPasswordByLogin = Queries::getInstance()->selectPasswordByLogin($escapeData['login']);
+        return $selectPasswordByLogin;
+    }
 
-
-	    $dbase = Db::getInstance();
-		$result = $dbase -> selectFromDB($selectQuery);
-
-		$MessageInSession = new Sessions();
-
-	    if (!empty($result)) {
-	        foreach ($result as $key => $value) {
-	            if ($value['pass'] === $upass) {
-	                $_SESSION['userId'] = $value['id'];
-	                $_SESSION['login'] = $value['login'];
-	                header("Location: index.php");
-	            } else {
-					$MessageInSession -> recordMessageInSession('authent', "Password is incorrect!"); 
-	            }
-	        }
-	    } else {
-	    	$MessageInSession -> recordMessageInSession('authent', "Login is incorrect!");
-	    }
-	}
 }

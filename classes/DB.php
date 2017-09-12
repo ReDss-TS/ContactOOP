@@ -2,18 +2,19 @@
 
 class DB
 {
-    public $server = 'localhost';
-    public $user   = 'admin';
-    public $passwd = '7535';
-    public $db     = 'contact_record';
+    public $dbConf;
+    public $conn;
 
-    protected $dbCon;
+    private static $instance;
 
-    private static $_instance;
-
-    protected function __construct()
+    private function __construct()
     {
-        $this->dbCon = mysqli_connect($this->server, $this->user, $this->passwd, $this->db);
+        $this->dbConf = include('includes/config.php');
+        $this->conn = mysqli_connect($this->dbConf['server'], $this->dbConf['user'], $this->dbConf['passwd'], $this->dbConf['db']);
+
+        if (mysqli_connect_error()) {
+            trigger_error("Failed to conencto to MySQL: " . mysql_connect_error(), E_USER_ERROR);
+        }
     }
 
     private function __clone()
@@ -28,20 +29,15 @@ class DB
 
     public static function getInstance()
     {
-        if (empty(self::$_instance)) {
-            self::$_instance = new self();
+        if (empty(self::$instance)) {
+            self::$instance = new self();
         }
-        return self::$_instance;
-    }
-
-    function getConnect()
-    {
-        return $this->dbCon;
+        return self::$instance;
     }
 
     function selectFromDB($sqlQuery)
     {
-        $result = $this->dbCon->query($sqlQuery);
+        $result = $this->conn->query($sqlQuery);
         if ($result->num_rows > 0) {
             while ($row =  $result->fetch_assoc()) {
                 $array[] = $row;
@@ -50,6 +46,15 @@ class DB
         if (!empty($array)) {
             return $array;
         }
+    }
+
+    function escapeData($data)
+    {   
+        foreach ($data as $key => $value) {
+            $val = mysqli_real_escape_string($this->conn, $value);
+            $this->ValidateData[$key] = $val;
+        }
+        return $this->ValidateData;
     }
 
 }
