@@ -24,7 +24,7 @@ class Queries
     }
 
 
-	function selectDataForMainPage()
+	public function selectDataForMainPage()
 	{
         $userId = $_SESSION['userId'];
         $selectQuery = "SELECT contact_list.id, contact_list.firstName, contact_list.lastName, contact_list.email, contact_phones.phone
@@ -36,9 +36,15 @@ class Queries
 	    return $selectQuery;
     }
 
-    function selectPasswordByLogin($login)
+    public function selectPasswordByLogin($login)
     {
         $selectQuery = "SELECT * FROM users where login = '$login'";
         return $selectQuery;
+    }
+
+    public function insertUserIntoDB($login, $pass)
+    {
+        $insertUserQuery = "INSERT INTO users (login, pass) VALUES ('$login', '$pass');";
+        return $insertUserQuery;
     }
 }

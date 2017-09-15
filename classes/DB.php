@@ -35,7 +35,7 @@ class DB
         return self::$instance;
     }
 
-    function selectFromDB($sqlQuery)
+    public function selectFromDB($sqlQuery)
     {
         $result = $this->conn->query($sqlQuery);
         if ($result->num_rows > 0) {
@@ -48,13 +48,19 @@ class DB
         }
     }
 
-    function escapeData($data)
+    public function insertToDB($sqlQuery)
+    {
+        $result = $this->conn->query($sqlQuery);
+        return $result;
+    }
+
+    public function escapeData($data)
     {   
         foreach ($data as $key => $value) {
             $val = mysqli_real_escape_string($this->conn, $value);
-            $this->ValidateData[$key] = $val;
+            $validateData[$key] = $val;
         }
-        return $this->ValidateData;
+        return $validateData;
     }
 
 }

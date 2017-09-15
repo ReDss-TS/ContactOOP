@@ -1,56 +1,24 @@
 <?php
 
-function __autoload($className)
-{
-    //$className = str_replace("..", "", $className);
-    require_once("classes/$className.php");
-}
+include_once 'includes/autoloadClasses.php';
 
-session_start();
 $bodyPage = '';
-$dataForUpdate = array();
-$selectedRadio = 0;
-$listWithInputError = '';
 
-$sessionManager = Sessions::getInstance();
-$isSignIn = $sessionManager -> issetLogin();
+$sessions = Sessions::getInstance();
+$isSignIn = $sessions->issetLogin();
 
-if ($isSignIn == 'yes') {
-    $data = new Table();
-    $tableHeaders = $data -> tableHeaders();
-
-    $selectDataForMainPage = Queries::getInstance() -> selectDataForMainPage();
-
-    $dbase = Db::getInstance();
-    $result = $dbase -> selectFromDB($selectDataForMainPage);
-
-    $filter = new Filters();
-    $sanitizeDate = $filter -> sanitizeSpecialChars($result);
-
-    $tableForData = new Forms();
-    $DataTable = $tableForData -> createHtmlTable($tableHeaders, $sanitizeDate);
-
-    $bodyPage .= $DataTable;
-    //$sessionManager -> logout();
+if ($isSignIn == true) {
+    $page = Pages::getInstance();
+    $bodyPage .= $page->mainPage();
 } else {
-    $formForLogin = new FormForLogin();
-    $form = $formForLogin->buildForm($listWithInputError);
-    $loginPage = HtmlElements::getInstance()->createHtmlBlock('Login', $form, 'Enter', 'Register');
-
-    $bodyPage .= $sessionManager -> showMessages();
-    $sessionManager -> unsetMessages();
-    $bodyPage .= $loginPage;
+    header("Location: login.php");
 }
 
-if (isset($_POST['EnterBtn'])) {
-       $arrayData['user_login'] = $_POST['user_login'];
-       $arrayData['user_pass'] = $_POST['user_pass'];
-       $authentication = new Auth();
-       $auth = $authentication->authentication($arrayData['user_login'], $arrayData['user_pass']);
-       is_array($auth) ? $sessionManager->authenticationToSession($auth) : $sessionManager->recordMessageInSession('auth', $auth);
-}
+$bodyPage .= $sessions->showMessages();
+$sessions->unsetMessages();
+$bodyPage .= $loginPage;
 
-//$sessionManager -> logout();
-include_once 'includes/headHtml.php';
+//$sessions->logout();
+include_once 'includes/header.php';
 echo $bodyPage;
 include_once 'includes/footer.php';
