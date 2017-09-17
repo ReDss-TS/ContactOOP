@@ -8,6 +8,7 @@ class Auth
         $upass = md5($upass);
         $selectLogin = $this->createQuery($ulogin, $upass);
         $resultQuery = Db::getInstance()->selectFromDB($selectLogin);
+
         if (!empty($resultQuery)) {
             foreach ($resultQuery as $key => $value) {
                 if ($value['pass'] === $upass) {
@@ -16,9 +17,9 @@ class Auth
                     $msg['msg'] = 'Password is incorrect!';
                 }
             }
-        } else {
-            $msg['msg'] = 'Login is incorrect';  
-        }
+        } elseif ($resultQuery->num_rows == 0) {
+            $msg['msg'] = 'Login is incorrect';
+        } 
         return $msg;
     }
 
@@ -29,7 +30,7 @@ class Auth
         $dataForAuthent['pass'] = $upass;
 
         $escapeData = Db::getInstance()->escapeData($dataForAuthent);
-        $selectPasswordByLogin = Queries::getInstance()->selectPasswordByLogin($escapeData['login'], $escapeData['pass']);
+        $selectPasswordByLogin = Users::getInstance()->selectPasswordByLogin($escapeData['login'], $escapeData['pass']);
         return $selectPasswordByLogin;
     }
 

@@ -16,7 +16,6 @@ if ($isSignIn == true) {
 
 $bodyPage .= $sessions->showMessages();
 $sessions->unsetMessages();
-$bodyPage .= $loginPage;
 
 //$sessions->logout();
 include_once 'includes/header.php';

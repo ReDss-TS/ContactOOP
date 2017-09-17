@@ -67,4 +67,12 @@ class StructureForm
             <input class = " . $typeBtn . " Btn type=\"submit\" name = " . $typeBtn . " Btn value = " . $typeBtn . " />
             </form>";
     }
+
+    public function createHeaderBtn($btn)
+    {
+        return "<form method = \"post\" action = " . $btn['action'] . ">
+                <a href = " . $btn['href'] . " class = \"button\">" . $btn['btnName'] . "</a>
+                <a href = \"logout.php\" class = \"button\">Logout</a>
+                </form>";
+    }
 }

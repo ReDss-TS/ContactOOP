@@ -29,7 +29,7 @@ class Table
     public function tableData($data)
     {
         $Contacts = '';
-        $Btn = new Forms();
+        $Btn = StructureForm::getInstance();
         if (!empty($data)) {
             foreach ($data as $key => $value) {
                 $Contacts .= "

@@ -6,7 +6,7 @@ $loginPage = '';
 
 $page = Pages::getInstance();
 //TODO
-//$loginPage .= $page->loginPage($_SERVER['REQUEST_URI']);
+//$loginPage .= $page->loginPage($_SERVER['REQUEST_URI']);  basename($_SERVER['SCRIPT_NAME'])
 $loginPage .= $page->loginPage('login');
 
 $sessions = Sessions::getInstance();
@@ -22,6 +22,11 @@ if (isset($_POST['EnterBtn'])) {
 $bodyPage .= $sessions->showMessages();
 $sessions->unsetMessages();
 $bodyPage .= $loginPage;
+
+$sessions = Sessions::getInstance();
+if ($sessions->issetLogin() == true) {
+    header("Location: index.php");
+}
 
 include_once 'includes/header.php';
 echo $bodyPage;

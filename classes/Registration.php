@@ -2,7 +2,7 @@
 
 class Registration
 {    
-    public function registration($ulogin, $upass)
+    public function register($ulogin, $upass)
     {   
         $msg = [];
         $upass = md5(trim($upass));
@@ -10,7 +10,7 @@ class Registration
         $insertUser = $this->createInsertUserQuery($ulogin, $upass);
 
         $resultSelectLoginQuery = Db::getInstance()->selectFromDB($selectLogin);
-        $resultInsertUserQuery = Db::getInstance()->insertToDB($selectLogin);
+        $resultInsertUserQuery = Db::getInstance()->insertToDB($insertUser);
 
         if ($resultSelectLoginQuery->num_rows > 0) {
             $msg['msg'] = 'login is busy! Please enter another login';
@@ -18,7 +18,7 @@ class Registration
             if ($resultInsertUserQuery === true) {
                 $msg['msg'] = 'You have successfully registered!';
             } else {
-                $msg['msg'] = "Error: $mysql->error";
+                $msg['msg'] = "Error";
             }           
         }
         return $msg;
@@ -36,15 +36,15 @@ class Registration
 
     private function createSelectLoginQuery($ulogin, $upass)
     {
-        $escapeData = $this->createQuery($ulogin, $upass);
-        $selectPasswordByLogin = Queries::getInstance()->selectPasswordByLogin($escapeData['login']);
+        $escapeData = $this->dataEscape($ulogin, $upass);
+        $selectPasswordByLogin = Users::getInstance()->selectPasswordByLogin($escapeData['login']);
         return $selectPasswordByLogin;
     }
 
     private function createInsertUserQuery($ulogin, $upass)
     {
-        $escapeData = $this->createQuery($ulogin, $upass);
-        $insertUserIntoDB = Queries::getInstance()->insertUserIntoDB($escapeData['login']);
+        $escapeData = $this->dataEscape($ulogin, $upass);
+        $insertUserIntoDB = Users::getInstance()->insertUserIntoDB($escapeData['login'], $escapeData['pass']);
         return $insertUserIntoDB;
     }
 }

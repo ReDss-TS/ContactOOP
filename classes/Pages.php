@@ -37,10 +37,11 @@ class Pages
 
 	public function mainPage()
     {
+        $bodyPage = '';
         $data = new Table();
         $tableHeaders = $data->tableHeaders();
 
-        $selectDataForMainPage = Queries::getInstance()->selectDataForMainPage();
+        $selectDataForMainPage = Contacts::getInstance()->selectDataForMainPage();
 
         $dbase = Db::getInstance();
         $result = $dbase->selectFromDB($selectDataForMainPage);
@@ -48,7 +49,7 @@ class Pages
         $filter = new Filters();
         $sanitizeDate = $filter->sanitizeSpecialChars($result);
 
-        $tableForData = new StructureForm();
+        $tableForData = StructureForm::getInstance();
         $DataTable = $tableForData->createTable($tableHeaders, $sanitizeDate);
 
         $bodyPage .= $DataTable;

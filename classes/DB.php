@@ -37,15 +37,16 @@ class DB
 
     public function selectFromDB($sqlQuery)
     {
+        $selectedData = [];
         $result = $this->conn->query($sqlQuery);
         if ($result->num_rows > 0) {
             while ($row =  $result->fetch_assoc()) {
-                $array[] = $row;
+                $selectedData[] = $row;
             }
+        } else {
+            return $result;
         }
-        if (!empty($array)) {
-            return $array;
-        }
+        return $selectedData;
     }
 
     public function insertToDB($sqlQuery)
