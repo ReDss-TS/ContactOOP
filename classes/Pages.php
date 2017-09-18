@@ -2,7 +2,7 @@
 
 class Pages
 {
-	public $elementsForForm = [
+    public $elementsForForm = [
             'login' => [
                 'header'   => 'Login',
                 'rightBtn' => 'Enter',
@@ -12,10 +12,15 @@ class Pages
                 'header'   => 'Register',
                 'rightBtn' => 'Register',
                 'leftBtn'  => 'Login'
+            ],
+            'insert' => [
+                'header'   => 'Add Contact',
+                'rightBtn' => 'Add',
+                'leftBtn'  => 'Index'
             ]
     ];
 
-	private static $instance;
+    private static $instance;
 
     private function __clone()
     {
@@ -35,7 +40,7 @@ class Pages
         return self::$instance;
     }
 
-	public function mainPage()
+    public function mainPage()
     {
         $bodyPage = '';
         $data = new Table();
@@ -59,7 +64,7 @@ class Pages
 
     public function loginPage($link)
     {
-    	$listWithInputError = '';
+        $listWithInputError = '';
         $formForLogin = new FormForLogin();
         $form = $formForLogin->buildForm($listWithInputError);
 
@@ -69,5 +74,21 @@ class Pages
             }
         }
         return $loginPage;
-   }
+    }
+
+    public function insertPage($link)
+    {
+        $listWithInputError = '';
+        $inputValues = [];
+        $selectedRadio = 0;
+        $formForAddContacts = new FormForInsert();
+        $form = $formForAddContacts->buildForm($inputValues, $selectedRadio, $listWithInputError);
+
+        foreach ($this->elementsForForm as $key => $value) {
+            if ($key == $link) {
+                $page = StructureForm::getInstance()->createStructureForm($value['header'], $form, $value['rightBtn'], $value['leftBtn']);
+            }
+        }
+        return $page;
+    }
 }
