@@ -14,6 +14,11 @@ if ($isSignIn == true) {
     header("Location: login.php");
 }
 
+if (isset($_POST['AddBtn'])) {
+    //TODO
+}
+
+
 $bodyPage .= $sessions->showMessages();
 $sessions->unsetMessages();
 
