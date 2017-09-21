@@ -29,7 +29,8 @@ class FormForInsert extends Forms
 	        $typeOfInput = ($key == 'user_pass') ? 'password' : 'text';
 	        $inputValue = (!empty($inputValues)) ? "value='$inputValues[$key]'" : '';
 	        $errorLabel = (!empty($listWithErrors)) ? "<label for =\"$key\" class = \"ErrorLabel\">$listWithErrors[$key]</label>" : '';
-	        $insertForm = $this->structureForForm($key, $value, $withRadioBtn, $typeOfInput, $inputValue, $errorLabel);
+	        $this->htmlFieldForInput($key, $value, $withRadioBtn, $typeOfInput, $inputValue, $errorLabel);
+            $insertForm = $this->getHtmlFieldForInput();
         }
         return $insertForm;
     }

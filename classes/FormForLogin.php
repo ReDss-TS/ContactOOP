@@ -14,7 +14,8 @@ class FormForLogin extends Forms
         foreach ($this->elementsOfForm as $key => $value) {
             $typeOfInput = ($key == 'user_pass') ? 'password' : 'text';
             $errorLabel = (!empty($listWithErrors)) ? "<label for =\"$key\" class = \"ErrorLabel\">$listWithErrors[$key]</label>" : '';
-            $loginForm = $this->structureForForm($key, $value, '', $typeOfInput, '', $errorLabel);
+            $this->htmlFieldForInput($key, $value, '', $typeOfInput, '', $errorLabel);
+            $loginForm = $this->getHtmlFieldForInput();
         }
         return $loginForm;
     }

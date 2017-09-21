@@ -4,6 +4,7 @@ class DB
 {
     public $dbConf;
     public $conn;
+    private $last_id = '';
 
     private static $instance;
 
@@ -52,6 +53,9 @@ class DB
     public function insertToDB($sqlQuery)
     {
         $result = $this->conn->query($sqlQuery);
+        if ($result === true) {
+            $this->last_id = $this->conn->insert_id;
+        }
         return $result;
     }
 
@@ -64,5 +68,9 @@ class DB
         return $validateData;
     }
 
+    public function getLastId()
+    {
+        return $this->last_id;
+    }
 }
 

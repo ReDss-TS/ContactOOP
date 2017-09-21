@@ -4,11 +4,11 @@ include_once 'includes/autoloadClasses.php';
 
 $bodyPage = '';
 
-$sessions = Sessions::getInstance();
+$sessions = new Sessions;
 $isSignIn = $sessions->issetLogin();
 
 if ($isSignIn == true) {
-    $page = Pages::getInstance();
+    $page = new Pages;
     $bodyPage .= $page->mainPage();
 } else {
     header("Location: login.php");
@@ -17,7 +17,6 @@ if ($isSignIn == true) {
 $bodyPage .= $sessions->showMessages();
 $sessions->unsetMessages();
 
-//$sessions->logout();
 include_once 'includes/header.php';
 echo $bodyPage;
 include_once 'includes/footer.php';

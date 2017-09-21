@@ -4,10 +4,10 @@ include_once 'includes/autoloadClasses.php';
 $bodyPage = '';
 $loginPage = '';
 
-$page = Pages::getInstance();
+$page = new Pages;
 $loginPage .= $page->loginPage('register');
 
-$sessions = Sessions::getInstance();
+$sessions = new Sessions;
 
 if (isset($_POST['RegisterBtn'])) {
     $arrayData['user_login'] = $_POST['user_login'];

@@ -4,18 +4,34 @@ include_once 'includes/autoloadClasses.php';
 
 $bodyPage = '';
 
-$sessions = Sessions::getInstance();
+$sessions = new Sessions;
 $isSignIn = $sessions->issetLogin();
 
 if ($isSignIn == true) {
-    $page = Pages::getInstance();
+    $page = new Pages;
     $bodyPage .= $page->insertPage('insert'); //TODO basename($_SERVER['SCRIPT_NAME'])
 } else {
     header("Location: login.php");
 }
 
 if (isset($_POST['AddBtn'])) {
-    //TODO
+    $contacts = new Contacts;
+    $labelsOfContact = $contacts->getLabelsOfContact();
+
+    $inputValues = [];
+    foreach ($labelsOfContact as $key => $value) {
+        $inputValues[] = $_POST[$value];
+    }
+    $insert = new InsertValues;
+    $isInserted = $insert->insert($labelsOfContact, $inputValues);
+
+    $sessions = new Sessions;
+	if ($isInserted == true) {
+		$sessions->recordMessageInSession('insert', "New record created successfully");
+		header("Location: index.php");
+	} else {
+        $sessions->recordMessageInSession('insert', "New record not created");
+    }
 }
 
 

@@ -37,14 +37,16 @@ class Registration
     private function createSelectLoginQuery($ulogin, $upass)
     {
         $escapeData = $this->dataEscape($ulogin, $upass);
-        $selectPasswordByLogin = Users::getInstance()->selectPasswordByLogin($escapeData['login']);
+        $usersObj = new Users;
+        $selectPasswordByLogin = $usersObj->selectPasswordByLogin($escapeData['login']);
         return $selectPasswordByLogin;
     }
 
     private function createInsertUserQuery($ulogin, $upass)
     {
         $escapeData = $this->dataEscape($ulogin, $upass);
-        $insertUserIntoDB = Users::getInstance()->insertUserIntoDB($escapeData['login'], $escapeData['pass']);
+        $usersObj = new Users;
+        $insertUserIntoDB = $usersObj->insertUserIntoDB($escapeData['login'], $escapeData['pass']);
         return $insertUserIntoDB;
     }
 }

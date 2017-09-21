@@ -2,5 +2,5 @@
 
 include_once 'includes/autoloadClasses.php';
 
-$exit = Logout::getInstance();
+$exit = new Logout;
 $exit->goOut();

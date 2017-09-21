@@ -20,45 +20,22 @@ class Pages
             ]
     ];
 
-    private static $instance;
-
-    private function __clone()
-    {
-
-    }
-
-    private function __wakeup()
-    {
-
-    }
-
-    public static function getInstance()
-    {
-        if (empty(self::$instance)) {
-            self::$instance = new self();
-        }
-        return self::$instance;
-    }
-
     public function mainPage()
     {
         $bodyPage = '';
         $data = new Table();
         $tableHeaders = $data->tableHeaders();
 
-        $selectDataForMainPage = Contacts::getInstance()->selectDataForMainPage();
-
-        $dbase = Db::getInstance();
-        $result = $dbase->selectFromDB($selectDataForMainPage);
+        $ContactObj = new Contacts();
+        $selectDataForMainPage = $ContactObj->selectDataForMainPage();
 
         $filter = new Filters();
-        $sanitizeDate = $filter->sanitizeSpecialChars($result);
+        $sanitizeDate = $filter->sanitizeSpecialChars($selectDataForMainPage);
 
-        $tableForData = StructureForm::getInstance();
+        $tableForData = new StructureForm;
         $DataTable = $tableForData->createTable($tableHeaders, $sanitizeDate);
 
         $bodyPage .= $DataTable;
-        //$sessionManager->logout();
         return $bodyPage;
     }
 
@@ -68,9 +45,10 @@ class Pages
         $formForLogin = new FormForLogin();
         $form = $formForLogin->buildForm($listWithInputError);
 
+        $structureForm = new StructureForm;
         foreach ($this->elementsForForm as $key => $value) {
             if ($key == $link) {
-                $loginPage = StructureForm::getInstance()->createStructureForm($value['header'], $form, $value['rightBtn'], $value['leftBtn']);
+                $loginPage = $structureForm->createStructureForm($value['header'], $form, $value['rightBtn'], $value['leftBtn']);
             }
         }
         return $loginPage;
@@ -84,9 +62,10 @@ class Pages
         $formForAddContacts = new FormForInsert();
         $form = $formForAddContacts->buildForm($inputValues, $selectedRadio, $listWithInputError);
 
+        $structureForm = new StructureForm;
         foreach ($this->elementsForForm as $key => $value) {
             if ($key == $link) {
-                $page = StructureForm::getInstance()->createStructureForm($value['header'], $form, $value['rightBtn'], $value['leftBtn']);
+                $page = $structureForm->createStructureForm($value['header'], $form, $value['rightBtn'], $value['leftBtn']);
             }
         }
         return $page;

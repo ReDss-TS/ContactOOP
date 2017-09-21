@@ -3,7 +3,7 @@
 include_once 'includes/autoloadClasses.php';
 
 $page = basename($_SERVER['SCRIPT_NAME']);
-$header = Header::getInstance();
+$header= new Header();
 $title = $header->headTitle($page);
 $btns = $header->headBtn($page);
 ?>

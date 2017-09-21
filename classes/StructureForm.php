@@ -1,28 +1,7 @@
 <?php
 
 class StructureForm
-{
-
-    private static $instance;
-
-    private function __clone()
-    {
-
-    }
-
-    private function __wakeup()
-    {
-
-    }
-
-    public static function getInstance()
-    {
-        if (empty(self::$instance)) {
-            self::$instance = new self();
-        }
-        return self::$instance;
-    }
-    
+{    
     public function createStructureForm($head, $inputForm, $btn1 ,$btn2)
     {
         $structureForPage = "
