@@ -1,11 +1,6 @@
 <?php
 
-include_once 'includes/autoloadClasses.php';
-
-$bodyPage = '';
-
-$sessions = new Sessions;
-$isSignIn = $sessions->issetLogin();
+include_once 'includes/initialFunc.php';
 
 if ($isSignIn == true) {
     $page = new Pages;
@@ -34,11 +29,4 @@ if (isset($_POST['AddBtn'])) {
     }
 }
 
-
-$bodyPage .= $sessions->showMessages();
-$sessions->unsetMessages();
-
-//$sessions->logout();
-include_once 'includes/header.php';
-echo $bodyPage;
-include_once 'includes/footer.php';
+include_once 'includes/body.php';

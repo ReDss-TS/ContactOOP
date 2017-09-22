@@ -9,7 +9,10 @@ class InsertValues
 		$validate = new Validate;
 		//$validateMsgs = $validate->dataValidation($data);
 
-		$data = array('userId' => $_SESSION['userId']) + $data;
+		$session = new Sessions;
+        $userId = $session->getUserID();
+        
+		$data = array('userId' => $userId) + $data;
 		$data = Db::getInstance()->escapeData($data);
 
 		$phonesObj = new Phones;

@@ -26,7 +26,8 @@ class Contacts
 
     public function selectDataForMainPage()
     {
-        $userId = $_SESSION['userId'];
+        $session = new Sessions;
+        $userId = $session->getUserID();
         $selectQuery = "SELECT contact_list.id, contact_list.firstName, contact_list.lastName, contact_list.email, contact_phones.phone
                             FROM contact_list 
                                 INNER JOIN contact_phones 
@@ -105,5 +106,12 @@ class Contacts
             return true;
         }
         return $amount;
+    }
+
+    public function deleteFromContactList($idLine, $userId)
+    {
+        $deleteQuery = "DELETE FROM contact_list WHERE id = '" . $idLine . "' AND userId = '" . $userId . "'";
+        $resultDelete = Db::getInstance()->delete($deleteQuery);
+        return $resultDelete;
     }
 }

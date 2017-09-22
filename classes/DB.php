@@ -72,5 +72,11 @@ class DB
     {
         return $this->last_id;
     }
+
+    public function delete($sqlQuery)
+    {
+        $result = $this->conn->query($sqlQuery);
+        return $result;
+    }
 }
 

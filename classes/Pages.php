@@ -17,6 +17,11 @@ class Pages
                 'header'   => 'Add Contact',
                 'rightBtn' => 'Add',
                 'leftBtn'  => 'Index'
+            ],
+            'update' => [
+                'header'   => 'Edit',
+                'rightBtn' => 'Done',
+                'leftBtn'  => 'Index'
             ]
     ];
 
@@ -70,4 +75,5 @@ class Pages
         }
         return $page;
     }
+
 }

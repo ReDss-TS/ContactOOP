@@ -1,7 +1,7 @@
 <?php
 
-include_once 'includes/autoloadClasses.php';
-$bodyPage = '';
+include_once 'includes/initialFunc.php';
+
 $loginPage = '';
 
 $page = new Pages;
@@ -18,8 +18,6 @@ if (isset($_POST['EnterBtn'])) {
     $auth = $authentication->authentication($arrayData['user_login'], $arrayData['user_pass']);
     $auth['is_auth'] == true ? $sessions->authenticationToSession($auth['user']) : $sessions->recordMessageInSession('auth', $auth['error_msg']);
 }
-
-$bodyPage .= $sessions->showMessages();
 $sessions->unsetMessages();
 $bodyPage .= $loginPage;
 
@@ -28,6 +26,4 @@ if ($sessions->issetLogin() == true) {
     header("Location: index.php");
 }
 
-include_once 'includes/header.php';
-echo $bodyPage;
-include_once 'includes/footer.php';
+include_once 'includes/body.php';
