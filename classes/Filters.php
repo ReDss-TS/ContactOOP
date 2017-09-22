@@ -2,8 +2,8 @@
 
 class Filters
 {   
-	function sanitizeSpecialChars($data)
-	{
+    public function sanitizeSpecialChars($data)
+    {
         if (!empty($data)) {
             foreach ($data as $key => $value) {
                 foreach ($value as $k => $val) {
@@ -13,5 +13,5 @@ class Filters
             }
         }
         return $filteredResult;
-	}
+    }
 }

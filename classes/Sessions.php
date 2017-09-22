@@ -2,40 +2,20 @@
 
 class Sessions
 {
-    private static $instance;
-
-    private function __clone()
-    {
-
-    }
-
-    private function __wakeup()
-    {
-
-    }
-
-    public static function getInstance()
-    {
-        if (empty(self::$instance)) {
-            self::$instance = new self();
-        }
-        return self::$instance;
-    }
-
-    function issetLogin() 
+    public function issetLogin() 
     {
         if (isset($_SESSION['login'])) {
-            return 'yes';
+            return true;
         }
-        return 'no';
+        return false;
     }
 
-    function recordMessageInSession($addressMsg, $msg)
+    public function recordMessageInSession($addressMsg, $msg)
     {
         $_SESSION['message'][$addressMsg] = $msg;
     }
 
-    function showMessages()
+    public function showMessages()
     {
         $messages = '';
         if (!empty($_SESSION['message'])) {
@@ -46,17 +26,17 @@ class Sessions
         return $messages;
     }
 
-    function unsetMessages()
+    public function unsetMessages()
     {
         unset($_SESSION['message']);
     }
 
-    function logout()
+    public function logout()
     {
         session_destroy();
     }
 
-    function authenticationToSession($authData)
+    public function authenticationToSession($authData)
     {    
         foreach ($authData as $key => $value) {
             $_SESSION['userId'] = $value['id'];

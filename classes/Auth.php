@@ -2,30 +2,43 @@
 
 class Auth
 {    
-    function authentication($ulogin, $upass)
-    {    
+    public function authentication($ulogin, $upass)
+    {   
+        $msg = [
+            'is_auth' => '',
+            'user' => '',
+            'error_msg' => ''
+        ];
+
         $upass = md5($upass);
-        $selectLogin = $this->createQuery($ulogin, $upass);
-        $resultQuery = Db::getInstance()->selectFromDB($selectLogin);
-        if (!empty($resultQuery)) {
-            foreach ($resultQuery as $key => $value) {
+        $selectedUserData = $this->selectLogin($ulogin, $upass);
+        
+        if (!empty($selectedUserData)) {
+            foreach ($selectedUserData as $key => $value) {
                 if ($value['pass'] === $upass) {
-                    return $resultQuery;
+                    $msg['is_auth'] = true;
+                    $msg['user'] = $selectedUserData;
+                } else {
+                    $msg['is_auth'] = false;
+                    $msg['error_msg'] = 'Password is incorrect!';
                 }
-                return "Password is incorrect!";
             }
-        }
-        return "Login is incorrect";
+        } elseif ($selectedUserData->num_rows == 0) {
+            $msg['is_auth'] = false;
+            $msg['error_msg'] = 'Login is incorrect';
+        } 
+        return $msg;
     }
 
-    function createQuery($ulogin, $upass)
+    private function selectLogin($ulogin, $upass)
     {
         $dataForAuthent = array();
         $dataForAuthent['login'] = $ulogin;
         $dataForAuthent['pass'] = $upass;
 
         $escapeData = Db::getInstance()->escapeData($dataForAuthent);
-        $selectPasswordByLogin = Queries::getInstance()->selectPasswordByLogin($escapeData['login']);
+        $usersObj = new Users;
+        $selectPasswordByLogin = $usersObj->selectPasswordByLogin($escapeData['login'], $escapeData['pass']);
         return $selectPasswordByLogin;
     }
 

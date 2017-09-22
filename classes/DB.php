@@ -4,6 +4,7 @@ class DB
 {
     public $dbConf;
     public $conn;
+    private $last_id = '';
 
     private static $instance;
 
@@ -35,27 +36,41 @@ class DB
         return self::$instance;
     }
 
-    function selectFromDB($sqlQuery)
+    public function selectFromDB($sqlQuery)
     {
+        $selectedData = [];
         $result = $this->conn->query($sqlQuery);
         if ($result->num_rows > 0) {
             while ($row =  $result->fetch_assoc()) {
-                $array[] = $row;
+                $selectedData[] = $row;
             }
+        } else {
+            return $result;
         }
-        if (!empty($array)) {
-            return $array;
-        }
+        return $selectedData;
     }
 
-    function escapeData($data)
+    public function insertToDB($sqlQuery)
+    {
+        $result = $this->conn->query($sqlQuery);
+        if ($result === true) {
+            $this->last_id = $this->conn->insert_id;
+        }
+        return $result;
+    }
+
+    public function escapeData($data)
     {   
         foreach ($data as $key => $value) {
             $val = mysqli_real_escape_string($this->conn, $value);
-            $this->ValidateData[$key] = $val;
+            $validateData[$key] = $val;
         }
-        return $this->ValidateData;
+        return $validateData;
     }
 
+    public function getLastId()
+    {
+        return $this->last_id;
+    }
 }
 

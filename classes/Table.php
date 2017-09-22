@@ -14,7 +14,7 @@ class Table
     public $tableHeader = '';
     public $sort = 'ASC';
 
-    function tableHeaders()
+    public function tableHeaders()
     {
     	foreach ($this->columnNames as $key => $value) {
     		if ($key == 'edit' || $key == 'delete') {
@@ -26,10 +26,10 @@ class Table
 		return $this->tableHeader;
     }
 
-    function tableData($data)
+    public function tableData($data)
     {
         $Contacts = '';
-        $Btn = new Forms();
+        $Btn = new StructureForm;
         if (!empty($data)) {
             foreach ($data as $key => $value) {
                 $Contacts .= "
