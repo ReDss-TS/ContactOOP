@@ -33,9 +33,9 @@ class Pages
 
         $ContactObj = new Contacts();
         $selectDataForMainPage = $ContactObj->selectDataForMainPage();
-
+        
         $filter = new Filters();
-        $sanitizeDate = $filter->sanitizeSpecialChars($selectDataForMainPage);
+        $sanitizeDate = $filter->sanitizeSpecialCharsInMultiArrays($selectDataForMainPage);
 
         $tableForData = new StructureForm;
         $DataTable = $tableForData->createTable($tableHeaders, $sanitizeDate);
@@ -64,8 +64,13 @@ class Pages
         $listWithInputError = '';
         $inputValues = [];
         $selectedRadio = 0;
+
+        $values =  new Values;
+        $inputValues = ($link == 'update') ? $values->getValuesForUpdate() : '';
+
+        $selectedRadio = $inputValues['selectedRadio'];
         $formForAddContacts = new FormForInsert();
-        $form = $formForAddContacts->buildForm($inputValues, $selectedRadio, $listWithInputError);
+        $form = $formForAddContacts->buildForm($inputValues['values'], $selectedRadio, $listWithInputError);
 
         $structureForm = new StructureForm;
         foreach ($this->elementsForForm as $key => $value) {

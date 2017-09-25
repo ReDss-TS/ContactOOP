@@ -21,6 +21,7 @@ class FormForInsert extends Forms
     public function buildForm($inputValues, $numRadio, $listWithErrors)
     {
         if (!empty($inputValues)) {
+            $filter = new Filters();
             $inputValues = $filter->sanitizeSpecialChars($inputValues);
         }
         //structure of form for insert data
@@ -53,4 +54,8 @@ class FormForInsert extends Forms
         return $formRadio;
     }
 
+    public function getElementsOfForm()
+    {
+        return $this->elementsOfForm;
+    }
 }

@@ -17,7 +17,7 @@ if (isset($_POST['AddBtn'])) {
     foreach ($labelsOfContact as $key => $value) {
         $inputValues[] = $_POST[$value];
     }
-    $insert = new InsertValues;
+    $insert = new Values;
     $isInserted = $insert->insert($labelsOfContact, $inputValues);
 
     $sessions = new Sessions;

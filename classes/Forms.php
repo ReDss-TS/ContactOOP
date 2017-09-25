@@ -3,6 +3,7 @@
 abstract class Forms
 {
     protected $elementsOfForm = [];
+
     protected $htmlFieldForInput = '';
 
     //abstract protected function buildForm($inputValues, $numRadio, $listWithErrors);

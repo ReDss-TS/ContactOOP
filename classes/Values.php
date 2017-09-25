@@ -1,6 +1,6 @@
 <?php
 
-class InsertValues
+class Values
 {
 	public function insert($labelsOfContact, $inputValues)
 	{
@@ -40,5 +40,40 @@ class InsertValues
         	$data[$labelsOfContact[$i]] = $inputValues[$i];
     	}
     	return $data;
+	}
+
+	public function getValuesForUpdate()
+	{
+		$forEscape['idLine'] = $_POST['idLine'];
+        $escapeData = Db::getInstance()->escapeData($forEscape);
+
+		$contactsObj =  new Contacts;
+		$selectedData = $contactsObj->selectAllData($escapeData['idLine']);
+		$selectedPhones = $contactsObj->selectPhones($escapeData['idLine']);
+
+		$phonesObj =  new Phones;
+		$phones = $phonesObj->sortPhonesByType($selectedPhones);
+
+		foreach ($selectedData as $key => $value) {
+			$valuesForUpdate = [
+    			'selectedRadio' => $value['favoritePhone'],
+    			'values' => [
+        			'user_name'     => $value['firstName'],
+        			'user_surname'  => $value['lastName'],
+        			'user_mail'     => $value['email'],
+        			'user_hPhone'   => $phones['hPhone'],
+	        		'user_wPhone'   => $phones['wPhone'],
+	        		'user_cPhone'   => $phones['cPhone'],
+	        		'user_address1' => $value['address1'],
+	        		'user_address2' => $value['address2'],
+	        		'user_city'     => $value['city'],
+	        		'user_state'    => $value['state'],
+	        		'user_zip'      => $value['zip'],
+	        		'user_country'  => $value['country'],
+	        		'user_birthday' => $value['birthday'],
+    			]
+    		];
+		}
+		return $valuesForUpdate;
 	}
 }

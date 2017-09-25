@@ -24,10 +24,15 @@ class Contacts
         return $this->labelsOfContact;
     }
 
-    public function selectDataForMainPage()
+    private function getUserID()
     {
         $session = new Sessions;
-        $userId = $session->getUserID();
+        return $session->getUserID();
+    }
+
+    public function selectDataForMainPage()
+    {
+        $userId = $this->getUserID();
         $selectQuery = "SELECT contact_list.id, contact_list.firstName, contact_list.lastName, contact_list.email, contact_phones.phone
                             FROM contact_list 
                                 INNER JOIN contact_phones 
@@ -96,22 +101,44 @@ class Contacts
     public function isInserted($result) //TODO
     {
         $amount = 0;
-        $num = count($result);
         foreach ($result as $key => $value) {
             if (!empty($value)) {
                 $amount++;
             }
         }
-        if ($amount == $num) {
+        if ($amount == count($result)) {
             return true;
         }
-        return $amount;
+        return false;
     }
 
-    public function deleteFromContactList($idLine, $userId)
+    public function deleteFromContactList($idLine)
     {
-        $deleteQuery = "DELETE FROM contact_list WHERE id = '" . $idLine . "' AND userId = '" . $userId . "'";
-        $resultDelete = Db::getInstance()->delete($deleteQuery);
-        return $resultDelete;
+        $userId = $this->getUserID();
+        return Db::getInstance()->delete("DELETE FROM contact_list WHERE id = '" . $idLine . "' AND userId = '" . $userId . "'");
+    }
+
+    public function selectAllData($idLine)
+    {
+        $userId = $this->getUserID();
+        $selectQuery = "SELECT contact_list.id, contact_list.firstName, contact_list.lastName, contact_list.email, contact_list.favoritePhone, contact_address.address1, contact_address.address2, contact_address.city, contact_address.state, contact_address.zip, contact_address.country, contact_address.birthday 
+                FROM contact_list 
+                    INNER JOIN contact_address 
+                        ON contact_list.id = contact_address.contactId
+                            WHERE contact_list.userId = '" . $userId . "' AND contact_list.id = '" . $idLine . "'";
+
+        $resultSelect = Db::getInstance()->selectFromDB($selectQuery);
+        return $resultSelect;
+    }
+
+    public function selectPhones($idLine)
+    {
+        $userId = $this->getUserID();
+        $selectQuery = "SELECT contact_phones.phone, contact_phones.phoneType 
+                            FROM contact_phones 
+                                WHERE contact_phones.contactId = '" . $idLine . "'";
+
+        $resultSelect = Db::getInstance()->selectFromDB($selectQuery);
+        return $resultSelect;
     }
 }

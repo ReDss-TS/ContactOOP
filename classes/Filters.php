@@ -2,7 +2,7 @@
 
 class Filters
 {   
-    public function sanitizeSpecialChars($data)
+    public function sanitizeSpecialCharsInMultiArrays($data)
     {
         if (!empty($data)) {
             foreach ($data as $key => $value) {
@@ -11,6 +11,14 @@ class Filters
                     $filteredResult[$key] = $resultVal;
                 }
             }
+        }
+        return $filteredResult;
+    }
+
+    public function sanitizeSpecialChars($data)
+    {
+        foreach ($data as $key => $value) {
+            $filteredResult[$key] = filter_var($value, FILTER_SANITIZE_SPECIAL_CHARS);
         }
         return $filteredResult;
     }
