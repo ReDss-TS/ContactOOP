@@ -2,13 +2,9 @@
 
 class Phones
 {	
-	public $phones = [
-		'1' => '', //home Phone
-        '2' => '', //work Phone
-        '3' => '' //cell Phone
-	];
+	protected $phones = [];
 
-    public $typesOfPhone = [
+    protected $typesOfPhone = [
         '0' => 'hPhone', //home Phone
         '1' => 'wPhone', //work Phone
         '2' => 'cPhone' //cell Phone

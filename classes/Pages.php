@@ -33,7 +33,7 @@ class Pages
 
         $ContactObj = new Contacts();
         $selectDataForMainPage = $ContactObj->selectDataForMainPage();
-        
+
         $filter = new Filters();
         $sanitizeDate = $filter->sanitizeSpecialCharsInMultiArrays($selectDataForMainPage);
 
@@ -65,12 +65,26 @@ class Pages
         $inputValues = [];
         $selectedRadio = 0;
 
-        $values =  new Values;
-        $inputValues = ($link == 'update') ? $values->getValuesForUpdate() : '';
-
-        $selectedRadio = $inputValues['selectedRadio'];
         $formForAddContacts = new FormForInsert();
-        $form = $formForAddContacts->buildForm($inputValues['values'], $selectedRadio, $listWithInputError);
+        $form = $formForAddContacts->buildForm($inputValues, $selectedRadio, $listWithInputError);
+
+        $structureForm = new StructureForm;
+        foreach ($this->elementsForForm as $key => $value) {
+            if ($key == $link) {
+                $page = $structureForm->createStructureForm($value['header'], $form, $value['rightBtn'], $value['leftBtn']);
+            }
+        }
+        return $page;
+    }
+
+    //TODO
+    public function updatePage($link)
+    {
+        $listWithInputError = '';
+        $inputValues = Values::getInstance()->getValuesForUpdate($_POST['idLine']);
+
+        $formForAddContacts = new FormForInsert();
+        $form = $formForAddContacts->buildForm($inputValues['values'], $inputValues['selectedRadio'], $listWithInputError);
 
         $structureForm = new StructureForm;
         foreach ($this->elementsForForm as $key => $value) {

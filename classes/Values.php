@@ -2,7 +2,70 @@
 
 class Values
 {
+	protected $idLine = '';
+
+	private static $instance;
+
+	private function __clone()
+    {
+
+    }
+
+    private function __wakeup()
+    {
+
+    }
+
+    public static function getInstance()
+    {
+        if (empty(self::$instance)) {
+            self::$instance = new self();
+        }
+        return self::$instance;
+    }
+
+	public function getInputValues($labelsOfContact)
+	{
+    	$inputValues = [];
+    	foreach ($labelsOfContact as $key => $value) {
+        	$inputValues[] = $_POST[$value];
+    	}
+    	return $inputValues;
+	}
+
 	public function insert($labelsOfContact, $inputValues)
+	{
+		$phonesObj = new Phones;
+		$data = $this->preprocessingData($labelsOfContact, $inputValues);
+		$data['bestPhone'] = $this->whichBestPhone($phonesObj, $data);
+		
+		$contactObj = new Contacts;
+		$results = [];
+		$results['idContact'] = $contactObj->insertDataToContactList($data);
+		$phones = $phonesObj->getPhones();
+		$results['phones'] = $contactObj->insertDataToContactPhones($results['idContact'], $phones);
+		$results['address'] = $contactObj->insertDataToContactAddress($results['idContact'], $data);
+		$isInserted = $contactObj->isDone($results);
+		return $isInserted;
+
+	}
+
+	public function update($labelsOfContact, $inputValues, $idLine)
+	{
+		$phonesObj = new Phones;
+		$data = $this->preprocessingData($labelsOfContact, $inputValues);
+
+		$contactObj = new Contacts;
+		$results = [];
+		$results['contacts'] = $contactObj->updateDataInContactList($data, $this->idLine);
+		$phones = $phonesObj->getPhones();
+		$results['phones'] = $contactObj->updateDataToContactPhones($phones, $this->idLine);
+		$results['address'] = $contactObj->updateDataToContactAddress($data, $this->idLine);
+		$isUpdated = $contactObj->isDone($results);
+		return $isUpdated;
+	}
+
+	private function preprocessingData($labelsOfContact, $inputValues)
 	{
 		$data = $this->createAssociativeData($labelsOfContact, $inputValues);
 
@@ -14,24 +77,7 @@ class Values
         
 		$data = array('userId' => $userId) + $data;
 		$data = Db::getInstance()->escapeData($data);
-
-		$phonesObj = new Phones;
-		$data['bestPhone'] = $phonesObj->choiceBestPhone(
-											$data['bestPhone'], 
-											$data['user_hPhone'], 
-											$data['user_wPhone'], 
-											$data['user_cPhone']
-										);
-		$contactObj = new Contacts;
-		$results = [];
-		$results['idContact'] = $contactObj->insertDataToContactList($data);
-		$phones = $phonesObj->getPhones();
-		$results['phones'] = $contactObj->insertDataToContactPhones($results['idContact'], $phones);
-		$results['address'] = $contactObj->insertDataToContactAddress($results['idContact'], $data);
-
-		$isInserted = $contactObj->insertDataToContactList($results);
-		return $isInserted;
-
+		return $data;
 	}
 
 	private function createAssociativeData($labelsOfContact, $inputValues)
@@ -42,10 +88,24 @@ class Values
     	return $data;
 	}
 
-	public function getValuesForUpdate()
+	private function whichBestPhone($phonesObj, $data)
 	{
-		$forEscape['idLine'] = $_POST['idLine'];
+		$bestPhone = $phonesObj->choiceBestPhone(
+											$data['bestPhone'], 
+											$data['user_hPhone'], 
+											$data['user_wPhone'], 
+											$data['user_cPhone']
+										);
+		return $bestPhone;
+	}
+	
+
+	public function getValuesForUpdate($idLine)
+	{
+		$forEscape = [];
+		$forEscape['idLine'] = $idLine;
         $escapeData = Db::getInstance()->escapeData($forEscape);
+        $this->idLine = $escapeData['idLine'];
 
 		$contactsObj =  new Contacts;
 		$selectedData = $contactsObj->selectAllData($escapeData['idLine']);
@@ -75,5 +135,10 @@ class Values
     		];
 		}
 		return $valuesForUpdate;
+	}
+
+	public function getIdLine()
+	{
+		return $this->idLine;
 	}
 }

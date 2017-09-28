@@ -12,13 +12,9 @@ if ($isSignIn == true) {
 if (isset($_POST['AddBtn'])) {
     $contacts = new Contacts;
     $labelsOfContact = $contacts->getLabelsOfContact();
-
-    $inputValues = [];
-    foreach ($labelsOfContact as $key => $value) {
-        $inputValues[] = $_POST[$value];
-    }
-    $insert = new Values;
-    $isInserted = $insert->insert($labelsOfContact, $inputValues);
+   
+    $inputValues = Values::getInstance()->getInputValues($labelsOfContact);
+    $isInserted = Values::getInstance()->insert($labelsOfContact, $inputValues);
 
     $sessions = new Sessions;
 	if ($isInserted == true) {

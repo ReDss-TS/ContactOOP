@@ -59,9 +59,9 @@ class Contacts
     }
 
     private function getLastID($answer)
-    {
+    {  
         $lastID = Db::getInstance()->getLastId();
-        if ($lastID != '') {
+        if (!empty($lastID)) {
             return $lastID;
         } else {
             //TODO
@@ -98,7 +98,7 @@ class Contacts
         return $resultInsert;
     }
 
-    public function isInserted($result) //TODO
+    public function isDone($result) //TODO
     {
         $amount = 0;
         foreach ($result as $key => $value) {
@@ -140,5 +140,49 @@ class Contacts
 
         $resultSelect = Db::getInstance()->selectFromDB($selectQuery);
         return $resultSelect;
+    }
+
+    public function updateDataInContactList($data, $idContactList)
+    {
+        $userId = $this->getUserID();
+        $updateQuery = "UPDATE contact_list 
+            SET firstName     = '" . $data['user_name'] . "',
+                lastName      = '" . $data['user_surname'] . "',
+                email         = '" . $data['user_mail'] . "',
+                favoritePhone = '" . $data['bestPhone'] . "' 
+                    WHERE contact_list.id   = '" . $idContactList . "' 
+                        AND contact_list.userId = '" . $userId . "'";
+        $resultUpdate = Db::getInstance()->updateDB($updateQuery);
+        return $resultInsert;
+    }
+
+    public function updateDataToContactPhones($data, $idContactList)
+    {
+        foreach ($data as $key => $value) {
+            $updateQuery = "INSERT INTO contact_phones (contactId, phone, phoneType) VALUES (
+                '" . $idContactList . "',
+                '" . $value . "',
+                '" . $key . "'
+                ) ON DUPLICATE KEY UPDATE phone = '" . $value . "'";
+            $resultUpdate = Db::getInstance()->updateDB($updateQuery);
+        }
+        return $resultUpdate;
+    }
+
+    public function updateDataToContactAddress($data, $idContactList)
+    {
+        $userId = $this->getUserID();
+        $updateQuery = "UPDATE contact_address, contact_list 
+            SET address1 = '" . $data['user_address1'] . "',
+                address2 = '" . $data['user_address2'] . "',
+                city     = '" . $data['user_city'] . "',
+                state    = '" . $data['user_state'] . "',
+                zip      = '" . $data['user_zip'] . "',
+                country  = '" . $data['user_country'] . "',
+                birthday = '" . $data['user_birthday'] . "' 
+                    WHERE contact_address.contactId = '" . $idContactList . "' 
+                        AND contact_list.userId     = '" . $userId . "'";
+        $resultUpdate = Db::getInstance()->updateDB($updateQuery);
+        return $resultUpdate;
     }
 }

@@ -78,5 +78,11 @@ class DB
         $result = $this->conn->query($sqlQuery);
         return $result;
     }
+    
+    public function updateDB($sqlQuery)
+    {
+        $result = $this->conn->query($sqlQuery);
+        return $result;
+    }
 }
 
