@@ -21,15 +21,15 @@ class FormForInsert extends Forms
     public function buildForm($inputValues, $numRadio, $listWithErrors)
     {
         if (!empty($inputValues)) {
+            $filter = new Filters();
             $inputValues = $filter->sanitizeSpecialChars($inputValues);
         }
         //structure of form for insert data
         foreach ($this->elementsOfForm as $key => $value) {
-	        $withRadioBtn = ($key == 'user_hPhone' || $key == 'user_wPhone'|| $key == 'user_cPhone') ? $this->addRadioBtn($key, $numRadio) : '';
-	        $typeOfInput = ($key == 'user_pass') ? 'password' : 'text';
-	        $inputValue = (!empty($inputValues)) ? "value='$inputValues[$key]'" : '';
-	        $errorLabel = (!empty($listWithErrors)) ? "<label for =\"$key\" class = \"ErrorLabel\">$listWithErrors[$key]</label>" : '';
-	        $this->htmlFieldForInput($key, $value, $withRadioBtn, $typeOfInput, $inputValue, $errorLabel);
+            $withRadioBtn = ($key == 'user_hPhone' || $key == 'user_wPhone'|| $key == 'user_cPhone') ? $this->addRadioBtn($key, $numRadio) : '';
+            $inputValue = (!empty($inputValues)) ? "value='$inputValues[$key]'" : '';
+            $errorLabel = (!empty($listWithErrors)) ? "<label for =\"$key\" class = \"ErrorLabel\">$listWithErrors[$key]</label>" : '';
+            $this->htmlFieldForInput($key, $value, $withRadioBtn, 'text', $inputValue, $errorLabel);
             $insertForm = $this->getHtmlFieldForInput();
         }
         return $insertForm;
@@ -54,4 +54,8 @@ class FormForInsert extends Forms
         return $formRadio;
     }
 
+    public function getElementsOfForm()
+    {
+        return $this->elementsOfForm;
+    }
 }

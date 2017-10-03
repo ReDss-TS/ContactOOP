@@ -4,17 +4,22 @@ class FormForLogin extends Forms
 {
 
     public $elementsOfForm = [
-            'user_login' => 'Login',
-            'user_pass'  => 'Password'
+            'user_login' => [
+                'label' => 'Login',
+                'type'  => 'text'
+            ],
+            'user_pass'  => [
+                'label' => 'Password',
+                'type'  => 'Password'
+            ]
     ];
     
     public function buildForm($listWithErrors)
     {
         //structure of form for login
         foreach ($this->elementsOfForm as $key => $value) {
-            $typeOfInput = ($key == 'user_pass') ? 'password' : 'text';
             $errorLabel = (!empty($listWithErrors)) ? "<label for =\"$key\" class = \"ErrorLabel\">$listWithErrors[$key]</label>" : '';
-            $this->htmlFieldForInput($key, $value, '', $typeOfInput, '', $errorLabel);
+            $this->htmlFieldForInput($key, $value['label'], '', $value['type'], '', $errorLabel);
             $loginForm = $this->getHtmlFieldForInput();
         }
         return $loginForm;

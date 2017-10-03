@@ -2,7 +2,7 @@
 
 class Table
 {
-    public $columnNames = array(
+    protected $columnNames = array(
         'firstName' => 'First Name',
         'lastName'  => 'Last Name',
         'email'     => 'Email',
@@ -11,16 +11,22 @@ class Table
         'delete'    => 'Delete'
     );
 
-    public $tableHeader = '';
-    public $sort = 'ASC';
+    protected $tableHeader = '';
+    protected $sortingTag = '&#8593;';
 
     public function tableHeaders()
-    {
+    {   
+        $orderObj = new Order;
+        $sortObj = new Sort;
+        $order = $orderObj->getOrder();
+        $sort = $sortObj->changeSortBy();
+
     	foreach ($this->columnNames as $key => $value) {
     		if ($key == 'edit' || $key == 'delete') {
         		$this->tableHeader .= "<th>$value</th>";
     		} else {
-        		$this->tableHeader .= "<th><a class=\"columnNames\" href=\"?order=$key&sort=$this->sort\">$value</a></th>";
+                $this->sortingTag = ($key == $order && $sort == 'ASC') ? '&#8593;' : (($key == $order && $sort == 'DESC') ? '&#8595;' : '');
+        		$this->tableHeader .= "<th><a class=\"columnNames\" href=\"?order=$key&sort=$sort\">$value $this->sortingTag</a></th>";
     		}
 		}
 		return $this->tableHeader;

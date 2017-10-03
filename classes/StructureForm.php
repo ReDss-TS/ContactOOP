@@ -2,11 +2,26 @@
 
 class StructureForm
 {    
+    public $actionsForm = [
+            //headerForm  => actionFile
+            'Login'       => 'Login',
+            'Register'    => 'Register',
+            'Add Contact' => 'Insert',
+            'Edit'        => 'update'
+    ];
+
+    public $actionsBtn = [
+            //nameBtn  => actionFile
+            'edit'   => 'update',
+            'delete' => 'delete'
+    ];
+
     public function createStructureForm($head, $inputForm, $btn1 ,$btn2)
     {
+        $actionFile = $this->getActions($this->actionsForm, $head);
         $structureForPage = "
             <div class = 'editBlock' id = 'editBlock'>
-                <form method = 'post' action = '$head.php'>
+                <form method = 'post' action=$actionFile.php>
                 <div class = 'editBlockHead' id = 'editBlockHead'>
                     <h2>
                         $head
@@ -19,6 +34,15 @@ class StructureForm
                 </form>
             </div>";
         return $structureForPage;
+    }
+
+    private function getActions($actions, $head)
+    {
+        foreach ($actions as $key => $value) {
+            if ($key == $head) {
+                return $value;
+            }
+        }
     }
 
     public function createTable($tableHeader, $tableData)
@@ -41,10 +65,12 @@ class StructureForm
     
     public function createBtn($typeBtn, $idLine)
     {
-        return "<form method = \"post\" action = " . $typeBtn . ".php>
+        $actionFile = $this->getActions($this->actionsBtn, $typeBtn);
+        $btn = "<form method = \"post\" action = " . $actionFile . ".php>
             <input type= \"hidden\" name = \"idLine\" value = " . $idLine . " />
             <input class = " . $typeBtn . " Btn type=\"submit\" name = " . $typeBtn . " Btn value = " . $typeBtn . " />
             </form>";
+        return $btn;
     }
 
     public function createHeaderBtn($btn)

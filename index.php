@@ -1,22 +1,16 @@
 <?php
 
-include_once 'includes/autoloadClasses.php';
-
-$bodyPage = '';
-
-$sessions = new Sessions;
-$isSignIn = $sessions->issetLogin();
+include_once 'includes/initialFunc.php';
 
 if ($isSignIn == true) {
-    $page = new Pages;
-    $bodyPage .= $page->mainPage();
+    //$page = new Pages;
+    $bodyPage .= Pages::getInstance()->mainPage();
 } else {
     header("Location: login.php");
 }
 
-$bodyPage .= $sessions->showMessages();
+$paginationObj = new Pagination;
+$pagination =  $paginationObj->getPagination();
+$bodyPage .= $pagination;
 $sessions->unsetMessages();
-
-include_once 'includes/header.php';
-echo $bodyPage;
-include_once 'includes/footer.php';
+include_once 'includes/body.php';

@@ -43,4 +43,9 @@ class Sessions
             $_SESSION['login'] = $value['login'];
         }
     }
+
+    public function getUserID()
+    {
+        return $_SESSION['userId'];
+    }
 }

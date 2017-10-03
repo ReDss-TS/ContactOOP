@@ -1,11 +1,11 @@
 <?php
 
-include_once 'includes/autoloadClasses.php';
-$bodyPage = '';
+include_once 'includes/initialFunc.php';
+
 $loginPage = '';
 
-$page = new Pages;
-$loginPage .= $page->loginPage('register');
+//$page = new Pages;
+$loginPage .= Pages::getInstance()->loginPage('register');
 
 $sessions = new Sessions;
 
@@ -16,11 +16,7 @@ if (isset($_POST['RegisterBtn'])) {
     $result = $registr->register($arrayData['user_login'], $arrayData['user_pass']);
     $sessions->recordMessageInSession('register', $result['msg']);
 }
-
-$bodyPage .= $sessions->showMessages();
 $sessions->unsetMessages();
 $bodyPage .= $loginPage;
 
-include_once 'includes/header.php';
-echo $bodyPage;
-include_once 'includes/footer.php';
+include_once 'includes/body.php';

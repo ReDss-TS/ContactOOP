@@ -1,15 +1,10 @@
 <?php
 
-include_once 'includes/autoloadClasses.php';
-
-$bodyPage = '';
-
-$sessions = new Sessions;
-$isSignIn = $sessions->issetLogin();
+include_once 'includes/initialFunc.php';
 
 if ($isSignIn == true) {
-    $page = new Pages;
-    $bodyPage .= $page->insertPage('insert'); //TODO basename($_SERVER['SCRIPT_NAME'])
+    //$page = new Pages;
+    $bodyPage .= Pages::getInstance()->insertPage('insert'); //TODO basename($_SERVER['SCRIPT_NAME'])
 } else {
     header("Location: login.php");
 }
@@ -17,13 +12,9 @@ if ($isSignIn == true) {
 if (isset($_POST['AddBtn'])) {
     $contacts = new Contacts;
     $labelsOfContact = $contacts->getLabelsOfContact();
-
-    $inputValues = [];
-    foreach ($labelsOfContact as $key => $value) {
-        $inputValues[] = $_POST[$value];
-    }
-    $insert = new InsertValues;
-    $isInserted = $insert->insert($labelsOfContact, $inputValues);
+    $valuesObj = new Values;
+    $inputValues = $valuesObj->getInputValues($labelsOfContact);
+    $isInserted = $valuesObj->insert($labelsOfContact, $inputValues);
 
     $sessions = new Sessions;
 	if ($isInserted == true) {
@@ -34,11 +25,4 @@ if (isset($_POST['AddBtn'])) {
     }
 }
 
-
-$bodyPage .= $sessions->showMessages();
-$sessions->unsetMessages();
-
-//$sessions->logout();
-include_once 'includes/header.php';
-echo $bodyPage;
-include_once 'includes/footer.php';
+include_once 'includes/body.php';
