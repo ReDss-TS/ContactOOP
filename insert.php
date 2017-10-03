@@ -3,8 +3,8 @@
 include_once 'includes/initialFunc.php';
 
 if ($isSignIn == true) {
-    $page = new Pages;
-    $bodyPage .= $page->insertPage('insert'); //TODO basename($_SERVER['SCRIPT_NAME'])
+    //$page = new Pages;
+    $bodyPage .= Pages::getInstance()->insertPage('insert'); //TODO basename($_SERVER['SCRIPT_NAME'])
 } else {
     header("Location: login.php");
 }
@@ -12,9 +12,9 @@ if ($isSignIn == true) {
 if (isset($_POST['AddBtn'])) {
     $contacts = new Contacts;
     $labelsOfContact = $contacts->getLabelsOfContact();
-   
-    $inputValues = Values::getInstance()->getInputValues($labelsOfContact);
-    $isInserted = Values::getInstance()->insert($labelsOfContact, $inputValues);
+    $valuesObj = new Values;
+    $inputValues = $valuesObj->getInputValues($labelsOfContact);
+    $isInserted = $valuesObj->insert($labelsOfContact, $inputValues);
 
     $sessions = new Sessions;
 	if ($isInserted == true) {

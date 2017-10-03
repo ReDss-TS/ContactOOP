@@ -2,7 +2,7 @@
 
 class Pages
 {
-    public $elementsForForm = [
+    protected $elementsForForm = [
             'login' => [
                 'header'   => 'Login',
                 'rightBtn' => 'Enter',
@@ -24,6 +24,35 @@ class Pages
                 'leftBtn'  => 'Index'
             ]
     ];
+    protected $listWithInputError = '';
+    protected $inputValues = [];
+    protected $selectedRadio = 0;
+
+
+    private static $instance;
+
+    private function __construct()
+    {
+
+    }
+
+    private function __clone()
+    {
+
+    }
+
+    private function __wakeup()
+    {
+
+    }
+
+    public static function getInstance()
+    {
+        if (empty(self::$instance)) {
+            self::$instance = new self();
+        }
+        return self::$instance;
+    }
 
     public function mainPage()
     {
@@ -61,12 +90,8 @@ class Pages
 
     public function insertPage($link)
     {
-        $listWithInputError = '';
-        $inputValues = [];
-        $selectedRadio = 0;
-
         $formForAddContacts = new FormForInsert();
-        $form = $formForAddContacts->buildForm($inputValues, $selectedRadio, $listWithInputError);
+        $form = $formForAddContacts->buildForm($this->inputValues, $this->selectedRadio, $this->listWithInputError);
 
         $structureForm = new StructureForm;
         foreach ($this->elementsForForm as $key => $value) {
@@ -81,7 +106,11 @@ class Pages
     public function updatePage($link)
     {
         $listWithInputError = '';
-        $inputValues = Values::getInstance()->getValuesForUpdate($_POST['idLine']);
+        if (isset($_POST['idLine'])) {
+            $_SESSION['idLine'] = $_POST['idLine'];
+        }
+        $valuesObj = new Values;
+        $inputValues = $valuesObj->getValuesForUpdate($_SESSION['idLine']);
 
         $formForAddContacts = new FormForInsert();
         $form = $formForAddContacts->buildForm($inputValues['values'], $inputValues['selectedRadio'], $listWithInputError);
@@ -93,6 +122,13 @@ class Pages
             }
         }
         return $page;
+    }
+
+    public function setProperties($listWithInputError, $inputValues, $selectedRadio)
+    {
+        $this->listWithInputError = $listWithInputError;
+        $this->inputValues = $inputValues;
+        $this->selectedRadio = $selectedRadio;
     }
 
 }

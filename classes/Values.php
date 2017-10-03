@@ -2,27 +2,8 @@
 
 class Values
 {
-	protected $idLine = '';
-
-	private static $instance;
-
-	private function __clone()
-    {
-
-    }
-
-    private function __wakeup()
-    {
-
-    }
-
-    public static function getInstance()
-    {
-        if (empty(self::$instance)) {
-            self::$instance = new self();
-        }
-        return self::$instance;
-    }
+	protected $validateMsgs = '';
+	protected $notEmptyValidateMsgs = '';
 
 	public function getInputValues($labelsOfContact)
 	{
@@ -38,29 +19,33 @@ class Values
 		$phonesObj = new Phones;
 		$data = $this->preprocessingData($labelsOfContact, $inputValues);
 		$data['bestPhone'] = $this->whichBestPhone($phonesObj, $data);
-		
-		$contactObj = new Contacts;
-		$results = [];
-		$results['idContact'] = $contactObj->insertDataToContactList($data);
-		$phones = $phonesObj->getPhones();
-		$results['phones'] = $contactObj->insertDataToContactPhones($results['idContact'], $phones);
-		$results['address'] = $contactObj->insertDataToContactAddress($results['idContact'], $data);
-		$isInserted = $contactObj->isDone($results);
-		return $isInserted;
-
+		if (empty($this->notEmptyValidateMsgs)) {	
+			$contactObj = new Contacts;
+			$results = [];
+			$results['idContact'] = $contactObj->insertDataToContactList($data);
+			$phones = $phonesObj->getPhones();
+			$results['phones'] = $contactObj->insertDataToContactPhones($results['idContact'], $phones);
+			$results['address'] = $contactObj->insertDataToContactAddress($results['idContact'], $data);
+			$isInserted = $contactObj->isDone($results);
+			return $isInserted;
+		} else {
+			//$pagesObj = new Pages;
+			Pages::getInstance()->setProperties($this->validateMsgs, $data, $data['bestPhone']);
+		}
 	}
 
 	public function update($labelsOfContact, $inputValues, $idLine)
-	{
+	{	
 		$phonesObj = new Phones;
 		$data = $this->preprocessingData($labelsOfContact, $inputValues);
+		$data['bestPhone'] = $this->whichBestPhone($phonesObj, $data);
 
 		$contactObj = new Contacts;
 		$results = [];
-		$results['contacts'] = $contactObj->updateDataInContactList($data, $this->idLine);
+		$results['contacts'] = $contactObj->updateDataInContactList($data, $idLine);
 		$phones = $phonesObj->getPhones();
-		$results['phones'] = $contactObj->updateDataToContactPhones($phones, $this->idLine);
-		$results['address'] = $contactObj->updateDataToContactAddress($data, $this->idLine);
+		$results['phones'] = $contactObj->updateDataToContactPhones($phones, $idLine);
+		$results['address'] = $contactObj->updateDataToContactAddress($data, $idLine);
 		$isUpdated = $contactObj->isDone($results);
 		return $isUpdated;
 	}
@@ -70,7 +55,9 @@ class Values
 		$data = $this->createAssociativeData($labelsOfContact, $inputValues);
 
 		$validate = new Validate;
-		//$validateMsgs = $validate->dataValidation($data);
+		$this->validateMsgs = $validate->validateData($data);
+
+		$this->notEmptyValidateMsgs = array_diff($this->validateMsgs, array(''));
 
 		$session = new Sessions;
         $userId = $session->getUserID();
@@ -105,7 +92,6 @@ class Values
 		$forEscape = [];
 		$forEscape['idLine'] = $idLine;
         $escapeData = Db::getInstance()->escapeData($forEscape);
-        $this->idLine = $escapeData['idLine'];
 
 		$contactsObj =  new Contacts;
 		$selectedData = $contactsObj->selectAllData($escapeData['idLine']);
@@ -135,10 +121,5 @@ class Values
     		];
 		}
 		return $valuesForUpdate;
-	}
-
-	public function getIdLine()
-	{
-		return $this->idLine;
 	}
 }

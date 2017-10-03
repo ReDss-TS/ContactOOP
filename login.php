@@ -4,10 +4,10 @@ include_once 'includes/initialFunc.php';
 
 $loginPage = '';
 
-$page = new Pages;
+//$page = new Pages;
 //TODO
 //$loginPage .= $page->loginPage($_SERVER['REQUEST_URI']);  basename($_SERVER['SCRIPT_NAME'])
-$loginPage .= $page->loginPage('login');
+$loginPage .= Pages::getInstance()->loginPage('login');
 
 $sessions = new Sessions;
 

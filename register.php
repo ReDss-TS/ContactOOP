@@ -4,8 +4,8 @@ include_once 'includes/initialFunc.php';
 
 $loginPage = '';
 
-$page = new Pages;
-$loginPage .= $page->loginPage('register');
+//$page = new Pages;
+$loginPage .= Pages::getInstance()->loginPage('register');
 
 $sessions = new Sessions;
 

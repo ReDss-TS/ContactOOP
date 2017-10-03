@@ -32,13 +32,19 @@ class Contacts
 
     public function selectDataForMainPage()
     {
+        $orderObj = new Order;
+        $sortObj = new Sort;
         $userId = $this->getUserID();
+        $order = $orderObj->getOrderBy();
+        $sort = $sortObj->getSortBy();
+
         $selectQuery = "SELECT contact_list.id, contact_list.firstName, contact_list.lastName, contact_list.email, contact_phones.phone
                             FROM contact_list 
                                 INNER JOIN contact_phones 
                                     ON contact_list.id = contact_phones.contactId
                                         WHERE contact_list.userId      = $userId
-                                        AND contact_list.favoritePhone = contact_phones.phoneType";
+                                        AND contact_list.favoritePhone = contact_phones.phoneType
+                                            ORDER BY $order $sort";
 
         $resultSelect = Db::getInstance()->selectFromDB($selectQuery);
         return $resultSelect;
@@ -153,7 +159,7 @@ class Contacts
                     WHERE contact_list.id   = '" . $idContactList . "' 
                         AND contact_list.userId = '" . $userId . "'";
         $resultUpdate = Db::getInstance()->updateDB($updateQuery);
-        return $resultInsert;
+        return $resultUpdate;
     }
 
     public function updateDataToContactPhones($data, $idContactList)
@@ -184,5 +190,18 @@ class Contacts
                         AND contact_list.userId     = '" . $userId . "'";
         $resultUpdate = Db::getInstance()->updateDB($updateQuery);
         return $resultUpdate;
+    }
+
+    public function selectCountFromContactList()
+    {
+        $userId = $this->getUserID();
+        $selectQuery = "SELECT COUNT(contact_list.id) 
+                        FROM contact_list, contact_phones 
+                            WHERE contact_list.id          = contact_phones.contactId 
+                            AND contact_list.userId        = $userId
+                            AND contact_list.favoritePhone = contact_phones.phoneType";
+
+        $resultSelect = Db::getInstance()->selectFromDB($selectQuery);
+        return $resultSelect;
     }
 }

@@ -72,7 +72,7 @@ class Validate
     	foreach ($this->validationRules as $keyRules => $valueRules) {
         	foreach ($valueRules as $k => $rule) {
             	if (isset($data[$keyRules])) {
-                	$response = $rule($data[$keyRules]);
+                	$response = $this->$rule($data[$keyRules]);
                 	$errorList[$keyRules] = $response;
                 	if ($response != '') {
                     	break;
