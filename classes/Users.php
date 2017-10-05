@@ -12,6 +12,7 @@ class Users
     public function insertUserIntoDB($login, $pass)
     {
         $insertUserQuery = "INSERT INTO users (login, pass) VALUES ('$login', '$pass');";
-        return $insertUserQuery;
+        $resultInsert = Db::getInstance()->insertToDB($insertUserQuery);
+        return $resultInsert;
     }
 }

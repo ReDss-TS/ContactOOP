@@ -12,7 +12,7 @@ class Auth
 
         $upass = md5($upass);
         $selectedUserData = $this->selectLogin($ulogin, $upass);
-        
+        var_dump($selectedUserData);  
         if (!empty($selectedUserData)) {
             foreach ($selectedUserData as $key => $value) {
                 if ($value['pass'] === $upass) {
@@ -38,8 +38,8 @@ class Auth
 
         $escapeData = Db::getInstance()->escapeData($dataForAuthent);
         $usersObj = new Users;
-        $selectPasswordByLogin = $usersObj->selectPasswordByLogin($escapeData['login'], $escapeData['pass']);
-        return $selectPasswordByLogin;
+        $selectedPasswordByLogin = $usersObj->selectPasswordByLogin($escapeData['login']);
+        return $selectedPasswordByLogin;
     }
 
 }

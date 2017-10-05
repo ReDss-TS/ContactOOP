@@ -6,16 +6,13 @@ class Registration
     {   
         $msg = [];
         $upass = md5(trim($upass));
-        $selectLogin = $this->createSelectLoginQuery($ulogin, $upass);
-        $insertUser = $this->createInsertUserQuery($ulogin, $upass);
+        $selectedLogin = $this->createSelectLoginQuery($ulogin, $upass);
+        $insertedUser = $this->createInsertUserQuery($ulogin, $upass);
 
-        $resultSelectLoginQuery = Db::getInstance()->selectFromDB($selectLogin);
-        $resultInsertUserQuery = Db::getInstance()->insertToDB($insertUser);
-
-        if ($resultSelectLoginQuery->num_rows > 0) {
+        if ($selectedLogin->num_rows > 0) {
             $msg['msg'] = 'login is busy! Please enter another login';
         } else {
-            if ($resultInsertUserQuery === true) {
+            if ($insertedUser === true) {
                 $msg['msg'] = 'You have successfully registered!';
             } else {
                 $msg['msg'] = "Error";
@@ -38,8 +35,8 @@ class Registration
     {
         $escapeData = $this->dataEscape($ulogin, $upass);
         $usersObj = new Users;
-        $selectPasswordByLogin = $usersObj->selectPasswordByLogin($escapeData['login']);
-        return $selectPasswordByLogin;
+        $selectedPasswordByLogin = $usersObj->selectPasswordByLogin($escapeData['login']);
+        return $selectedPasswordByLogin;
     }
 
     private function createInsertUserQuery($ulogin, $upass)

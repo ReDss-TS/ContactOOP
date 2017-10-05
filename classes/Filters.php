@@ -12,7 +12,9 @@ class Filters
                 }
             }
         }
-        return $filteredResult;
+        if (!empty($filteredResult)) {
+            return $filteredResult;
+        }
     }
 
     public function sanitizeSpecialChars($data)
@@ -20,6 +22,8 @@ class Filters
         foreach ($data as $key => $value) {
             $filteredResult[$key] = filter_var($value, FILTER_SANITIZE_SPECIAL_CHARS);
         }
-        return $filteredResult;
+        if (!empty($filteredResult)) {
+            return $filteredResult;
+        }
     }
 }

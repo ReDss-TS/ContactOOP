@@ -40,14 +40,19 @@ class Values
 		$data = $this->preprocessingData($labelsOfContact, $inputValues);
 		$data['bestPhone'] = $this->whichBestPhone($phonesObj, $data);
 
-		$contactObj = new Contacts;
-		$results = [];
-		$results['contacts'] = $contactObj->updateDataInContactList($data, $idLine);
-		$phones = $phonesObj->getPhones();
-		$results['phones'] = $contactObj->updateDataToContactPhones($phones, $idLine);
-		$results['address'] = $contactObj->updateDataToContactAddress($data, $idLine);
-		$isUpdated = $contactObj->isDone($results);
-		return $isUpdated;
+		if (empty($this->notEmptyValidateMsgs)) {
+			$contactObj = new Contacts;
+			$results = [];
+			$results['contacts'] = $contactObj->updateDataInContactList($data, $idLine);
+			$phones = $phonesObj->getPhones();
+			$results['phones'] = $contactObj->updateDataToContactPhones($phones, $idLine);
+			$results['address'] = $contactObj->updateDataToContactAddress($data, $idLine);
+			$isUpdated = $contactObj->isDone($results);
+			return $isUpdated;
+		} else {
+			//$pagesObj = new Pages;
+			Pages::getInstance()->setProperties($this->validateMsgs, $data, $data['bestPhone']);
+		}
 	}
 
 	private function preprocessingData($labelsOfContact, $inputValues)
@@ -56,7 +61,6 @@ class Values
 
 		$validate = new Validate;
 		$this->validateMsgs = $validate->validateData($data);
-
 		$this->notEmptyValidateMsgs = array_diff($this->validateMsgs, array(''));
 
 		$session = new Sessions;
