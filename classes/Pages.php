@@ -28,6 +28,9 @@ class Pages
     protected $inputValues;
     protected $selectedRadio;
 
+    protected $pageFirstResult;
+    protected $resultsPerPage;
+
 
     private static $instance;
 
@@ -59,9 +62,8 @@ class Pages
         $bodyPage = '';
         $data = new Table();
         $tableHeaders = $data->tableHeaders();
-
         $ContactObj = new Contacts();
-        $selectDataForMainPage = $ContactObj->selectDataForMainPage();
+        $selectDataForMainPage = $ContactObj->selectDataForMainPage($this->pageFirstResult, $this->resultsPerPage);
 
         $filter = new Filters();
         $sanitizeDate = $filter->sanitizeSpecialCharsInMultiArrays($selectDataForMainPage);
@@ -130,7 +132,6 @@ class Pages
         } else {
             return $validateList;
         }
-
 
     }
 
@@ -210,6 +211,12 @@ class Pages
         $this->listWithInputError = $listWithInputError;
         $this->inputValues = $inputValues;
         $this->selectedRadio = $selectedRadio;
+    }
+
+    public function setPagesProperties($pageFirstResult, $resultsPerPage)
+    {
+        $this->pageFirstResult = $pageFirstResult;
+        $this->resultsPerPage = $resultsPerPage;
     }
 
 }

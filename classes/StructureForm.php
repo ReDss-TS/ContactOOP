@@ -1,7 +1,7 @@
 <?php
 
 class StructureForm
-{    
+{
     public $actionsForm = [
             //headerForm  => actionFile
             'Login'       => 'Login',

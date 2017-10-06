@@ -35,12 +35,9 @@ class Pagination
         $contactObj = new Contacts;
         //number of records in ContactList table
         $numberOfRecords = $contactObj->selectCountFromContactList();
-
-        foreach ($numberOfResults as $key => $value) {
-            foreach ($value as $k => $val) {
-                //total pages
-                $this->numberOfPages = ceil($val / $this->resultsPerPage);
-            }
+        foreach ($numberOfRecords[0] as $key => $value) {
+            //total pages
+            $this->numberOfPages = ceil($value / $this->resultsPerPage);
         }
     }
 
@@ -80,7 +77,7 @@ class Pagination
 
     private function getLink($page, $name)
     {
-        return "<a href=\"$this->targetpage?page=$prevPage&order=$this->order&sort=$this->sort\">$name</a>";
+        return "<a href=\"$this->targetpage?page=$page&order=$this->order&sort=$this->sort\">$name</a>";
     }
 
     private function getThreeDots()
@@ -104,6 +101,7 @@ class Pagination
         $this->setProperties();
         $this->setOrderBy();
         $this->setSortBy();
+        $this->setPagesProperties();
 
         $pagination = '';
 
@@ -111,68 +109,114 @@ class Pagination
             $pagination .= "<div class=\"pagination\">";
 
             //previous button
-            if ($page > 1) {
-                $pagination .= $this->getLink($prevPage, 'Previous');
-            } else {
-                $pagination .= "<span class=\"disabled\">Previous</span>";
-            }
+            $pagination .= $this->previousButton();
 
             //pages
-            if ($this->lastPage < 7 + ($this->adjacents * 2)) {
-
-                for ($i = 1; $i <= $this->lastPage; $i++) {
-                    $pagination .= $this->getPages($i);
-                }
-
-            } elseif ($this->lastPage > 5 + ($this->adjacents * 2)) {
-                //near the beginning;only hide later pages
-                if ($this->page < 1 + ($this->adjacents * 2)) {
-
-                    for ($i = 1; $i < 4 + ($this->adjacents * 2); $i++) {
-                        $pagination .= $this->getPages($i);
-                    }
-
-                    $pagination .= $this->getThreeDots();
-                    $pagination .= $this->getLink($this->lpm1, $this->lpm1);
-                    $pagination .= $this->getLink($this->lastPage, $this->lastPage);
-                    //in middle;hide some front and some back
-                } elseif ($this->lastPage - ($this->adjacents * 2) > $this->page && $this->page > ($this->adjacents * 2)) {
-
-                    $pagination .= $this->getLink('1', '1');
-                    $pagination .= $this->getLink('2', '2');
-                    $pagination .= $this->getThreeDots();
-
-                    for ($i = $this->page - $this->adjacents; $i <= $this->page + $this->adjacents; $i++) {
-                        $pagination .= $this->getPages($i);
-                    }
-
-                    $pagination .= $this->getThreeDots();
-                    $pagination .= $this->getLink($this->lpm1, $this->lpm1);
-                    $pagination .= $this->getLink($this->lastPage, $this->lastPage);
-                    //near the end;only hide early pages
-                } else {
-                    $pagination .= $this->getLink('1', '1');
-                    $pagination .= $this->getLink('2', '2');
-                    $pagination .= $this->getThreeDots();
-
-                    for ($i = $this->lastPage - (2 + ($this->adjacents * 2)); $i <= $this->lastPage; $i++) {
-                        $pagination .= $this->getPages($i);
-                    }
-                }
-            }
+            $pagination .= $this->pages();
+            
             //next button
-            if ($page < $i - 1) {
-                $pagination.= $this->getLink($nextPage, 'Next');
-            } else {
-                $pagination.= "<span class=\"disabled\">Next</span>";
-            }
+            $pagination .= $this->nextButton();
+
             $pagination.= "</div>\n";
         }
         $this->pagination = $pagination;
     }
 
+    private function previousButton()
+    {
+        $pagination = '';
+        if ($this->page > 1) {
+            $pagination .= $this->getLink($this->prevPage, 'Previous');
+        } else {
+            $pagination .= "<span class=\"disabled\">Previous</span>";
+        }
+        return $pagination;
+    }
+
+    private function nextButton()
+    {
+        $pagination = '';
+        if ($this->page < $this->numberOfPages) {
+            $pagination.= $this->getLink($this->nextPage, 'Next');
+        } else {
+            $pagination.= "<span class=\"disabled\">Next</span>";
+        }
+        return $pagination;
+    }
+
+    private function pages()
+    {
+        $pagination = '';
+        if ($this->lastPage < 7 + ($this->adjacents * 2)) {
+            for ($i = 1; $i <= $this->lastPage; $i++) {
+                $pagination .= $this->getPages($i);
+            }
+        } elseif ($this->lastPage > 5 + ($this->adjacents * 2)) {     
+            if ($this->page < 1 + ($this->adjacents * 2)) {
+                //near the beginning;only hide later pages
+                $this->beginningPages();
+            } elseif ($this->lastPage - ($this->adjacents * 2) > $this->page && $this->page > ($this->adjacents * 2)) {
+                //in middle;hide some front and some back
+                $this->middlePages();
+            } else {
+                //near the end;only hide early pages
+                $this->endingPages();
+            }
+        }
+        return $pagination;
+    }
+
+
+    private function beginningPages()
+    {
+        $pagination = '';
+        for ($i = 1; $i < 4 + ($this->adjacents * 2); $i++) {
+            $pagination .= $this->getPages($i);
+        }
+
+        $pagination .= $this->getThreeDots();
+        $pagination .= $this->getLink($this->lpm1, $this->lpm1);
+        $pagination .= $this->getLink($this->lastPage, $this->lastPage);
+        return $pagination;
+    }
+
+    private function endingPages()
+    {
+        $pagination = '';
+        $pagination .= $this->getLink('1', '1');
+        $pagination .= $this->getLink('2', '2');
+        $pagination .= $this->getThreeDots();
+
+        for ($i = $this->lastPage - (2 + ($this->adjacents * 2)); $i <= $this->lastPage; $i++) {
+            $pagination .= $this->getPages($i);
+        }
+        return $pagination;
+    }
+
+    private function middlePages()
+    {
+        $pagination = '';
+        $pagination .= $this->getLink('1', '1');
+        $pagination .= $this->getLink('2', '2');
+        $pagination .= $this->getThreeDots();
+
+        for ($i = $this->page - $this->adjacents; $i <= $this->page + $this->adjacents; $i++) {
+            $pagination .= $this->getPages($i);
+        }
+
+        $pagination .= $this->getThreeDots();
+        $pagination .= $this->getLink($this->lpm1, $this->lpm1);
+        $pagination .= $this->getLink($this->lastPage, $this->lastPage);
+        return $pagination;
+    }
+
     public function getPagination()
     {
         return $this->pagination;
+    }
+
+    private function setPagesProperties()
+    {
+        Pages::getInstance()->setPagesProperties($this->pageFirstResult ,$this->resultsPerPage);
     }
 }

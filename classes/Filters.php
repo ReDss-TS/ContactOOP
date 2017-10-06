@@ -1,6 +1,6 @@
 <?php
 
-class Filters
+class Filters//TODO recursion!
 {   
     public function sanitizeSpecialCharsInMultiArrays($data)
     {

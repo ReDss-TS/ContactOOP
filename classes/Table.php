@@ -21,15 +21,15 @@ class Table
         $order = $orderObj->getOrder();
         $sort = $sortObj->changeSortBy();
 
-    	foreach ($this->columnNames as $key => $value) {
-    		if ($key == 'edit' || $key == 'delete') {
-        		$this->tableHeader .= "<th>$value</th>";
-    		} else {
+        foreach ($this->columnNames as $key => $value) {
+            if ($key == 'edit' || $key == 'delete') {
+                $this->tableHeader .= "<th>$value</th>";
+            } else {
                 $this->sortingTag = ($key == $order && $sort == 'ASC') ? '&#8593;' : (($key == $order && $sort == 'DESC') ? '&#8595;' : '');
-        		$this->tableHeader .= "<th><a class=\"columnNames\" href=\"?order=$key&sort=$sort\">$value $this->sortingTag</a></th>";
-    		}
-		}
-		return $this->tableHeader;
+                $this->tableHeader .= "<th><a class=\"columnNames\" href=\"?order=$key&sort=$sort\">$value $this->sortingTag</a></th>";
+            }
+        }
+        return $this->tableHeader;
     }
 
     public function tableData($data)

@@ -1,7 +1,7 @@
 <?php
 
 class Sort
-{   
+{
     public function getSortBy()
     {
         if (isset($_GET['sort'])) {
