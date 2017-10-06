@@ -19,6 +19,7 @@ class Contacts
         'user_birthday'
     ];
 
+
     public function getLabelsOfContact()
     {
         return $this->labelsOfContact;
@@ -30,7 +31,7 @@ class Contacts
         return $session->getUserID();
     }
 
-    public function selectDataForMainPage()
+    public function selectDataForMainPage($pageFirstResult, $resultsPerPage)
     {
         $orderObj = new Order;
         $sortObj = new Sort;
@@ -44,7 +45,8 @@ class Contacts
                                     ON contact_list.id = contact_phones.contactId
                                         WHERE contact_list.userId      = $userId
                                         AND contact_list.favoritePhone = contact_phones.phoneType
-                                            ORDER BY $order $sort";
+                                            ORDER BY $order $sort
+                                                LIMIT $pageFirstResult , $resultsPerPage";
 
         $resultSelect = Db::getInstance()->selectFromDB($selectQuery);
         return $resultSelect;
@@ -195,7 +197,7 @@ class Contacts
     public function selectCountFromContactList()
     {
         $userId = $this->getUserID();
-        $selectQuery = "SELECT COUNT(contact_list.id) 
+        $selectQuery = "SELECT COUNT(contact_list.id) AS amt 
                         FROM contact_list, contact_phones 
                             WHERE contact_list.id          = contact_phones.contactId 
                             AND contact_list.userId        = $userId
@@ -204,4 +206,5 @@ class Contacts
         $resultSelect = Db::getInstance()->selectFromDB($selectQuery);
         return $resultSelect;
     }
+
 }

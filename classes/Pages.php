@@ -24,9 +24,12 @@ class Pages
                 'leftBtn'  => 'Index'
             ]
     ];
-    protected $listWithInputError = '';
-    protected $inputValues = [];
-    protected $selectedRadio = 0;
+    protected $listWithInputError;
+    protected $inputValues;
+    protected $selectedRadio;
+
+    protected $pageFirstResult;
+    protected $resultsPerPage;
 
 
     private static $instance;
@@ -59,9 +62,8 @@ class Pages
         $bodyPage = '';
         $data = new Table();
         $tableHeaders = $data->tableHeaders();
-
         $ContactObj = new Contacts();
-        $selectDataForMainPage = $ContactObj->selectDataForMainPage();
+        $selectDataForMainPage = $ContactObj->selectDataForMainPage($this->pageFirstResult, $this->resultsPerPage);
 
         $filter = new Filters();
         $sanitizeDate = $filter->sanitizeSpecialCharsInMultiArrays($selectDataForMainPage);
@@ -76,6 +78,20 @@ class Pages
     public function loginPage($link)
     {
         $listWithInputError = '';
+        $sessions = new Sessions;
+
+        if (isset($_POST['RegisterBtn'])) {
+            $listWithInputError = $this->registration();
+        }
+
+        if (isset($_POST['EnterBtn'])) {
+            $this->authentication();
+        }
+
+        if ($sessions->issetLogin() == true) {
+            header("Location: index.php");
+        }
+
         $formForLogin = new FormForLogin();
         $form = $formForLogin->buildForm($listWithInputError);
 
@@ -88,8 +104,55 @@ class Pages
         return $loginPage;
     }
 
-    public function insertPage($link)
+    private function authentication()
     {
+        $sessions = new Sessions;
+        $arrayData['user_login'] = $_POST['user_login'];
+        $arrayData['user_pass'] = $_POST['user_pass'];
+        $authentication = new Auth();
+        $auth = $authentication->authentication($arrayData['user_login'], $arrayData['user_pass']);
+        $auth['is_auth'] == true ? $sessions->authenticationToSession($auth['user']) : $sessions->recordMessageInSession('auth', $auth['error_msg']);
+    }
+
+    private function registration()
+    {
+        $sessions = new Sessions;
+        $validateObj = new Validate;
+        $arrayData['user_login'] = $_POST['user_login'];
+        $arrayData['user_pass'] = $_POST['user_pass'];
+
+        $validateList = $validateObj->validateData($arrayData);
+        $noEmptyValidateList = array_diff($validateList, array(''));
+
+        if (empty($noEmptyValidateList)) {
+            $registr = new Registration();
+            $result = $registr->register($arrayData['user_login'], $arrayData['user_pass']);
+            $sessions->recordMessageInSession('register', $result['msg']);
+            return '';
+        } else {
+            return $validateList;
+        }
+
+    }
+
+    public function insertPage($link)
+    {   
+        if (isset($_POST['AddBtn'])) {
+            $contacts = new Contacts;
+            $labelsOfContact = $contacts->getLabelsOfContact();
+            $valuesObj = new Values;
+            $inputValues = $valuesObj->getInputValues($labelsOfContact);
+            $isInserted = $valuesObj->insert($labelsOfContact, $inputValues);
+
+            $sessions = new Sessions;
+            if ($isInserted == true) {
+                $sessions->recordMessageInSession('insert', "New record created successfully");
+                header("Location: index.php");
+            } else {
+                $sessions->recordMessageInSession('insert', "New record not created");
+            }
+        }
+
         $formForAddContacts = new FormForInsert();
         $form = $formForAddContacts->buildForm($this->inputValues, $this->selectedRadio, $this->listWithInputError);
 
@@ -99,6 +162,7 @@ class Pages
                 $page = $structureForm->createStructureForm($value['header'], $form, $value['rightBtn'], $value['leftBtn']);
             }
         }
+
         return $page;
     }
 
@@ -112,8 +176,26 @@ class Pages
         $valuesObj = new Values;
         $inputValues = $valuesObj->getValuesForUpdate($_SESSION['idLine']);
 
+        $this->setProperties($listWithInputError, $inputValues['values'], $inputValues['selectedRadio']);
+
+        if (isset($_POST['DoneBtn'])) {
+            $contacts = new Contacts;
+            $labelsOfContact = $contacts->getLabelsOfContact();
+            $valuesObj = new Values;
+            $inputValues = $valuesObj->getInputValues($labelsOfContact);
+            $isUpdated = $valuesObj->update($labelsOfContact, $inputValues, $_SESSION['idLine']);
+
+            $sessions = new Sessions;
+            if ($isUpdated == true) {
+                $sessions->recordMessageInSession('update', "Record update successfully!");
+                header("Location: index.php");
+            } else {
+                $sessions->recordMessageInSession('update', "New record not updated");
+            }
+        }
+
         $formForAddContacts = new FormForInsert();
-        $form = $formForAddContacts->buildForm($inputValues['values'], $inputValues['selectedRadio'], $listWithInputError);
+        $form = $formForAddContacts->buildForm($this->inputValues, $this->selectedRadio, $this->listWithInputError);
 
         $structureForm = new StructureForm;
         foreach ($this->elementsForForm as $key => $value) {
@@ -129,6 +211,12 @@ class Pages
         $this->listWithInputError = $listWithInputError;
         $this->inputValues = $inputValues;
         $this->selectedRadio = $selectedRadio;
+    }
+
+    public function setPagesProperties($pageFirstResult, $resultsPerPage)
+    {
+        $this->pageFirstResult = $pageFirstResult;
+        $this->resultsPerPage = $resultsPerPage;
     }
 
 }

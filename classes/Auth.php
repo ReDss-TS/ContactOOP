@@ -5,24 +5,21 @@ class Auth
     public function authentication($ulogin, $upass)
     {   
         $msg = [
-            'is_auth' => '',
+            'is_auth' => 'false',
             'user' => '',
             'error_msg' => ''
         ];
 
         $upass = md5($upass);
         $selectedUserData = $this->selectLogin($ulogin, $upass);
-        
         if (!empty($selectedUserData)) {
-            foreach ($selectedUserData as $key => $value) {
-                if ($value['pass'] === $upass) {
+                if ($selectedUserData[0]['pass'] === $upass) {
                     $msg['is_auth'] = true;
                     $msg['user'] = $selectedUserData;
                 } else {
                     $msg['is_auth'] = false;
                     $msg['error_msg'] = 'Password is incorrect!';
                 }
-            }
         } elseif ($selectedUserData->num_rows == 0) {
             $msg['is_auth'] = false;
             $msg['error_msg'] = 'Login is incorrect';
@@ -32,14 +29,9 @@ class Auth
 
     private function selectLogin($ulogin, $upass)
     {
-        $dataForAuthent = array();
-        $dataForAuthent['login'] = $ulogin;
-        $dataForAuthent['pass'] = $upass;
-
-        $escapeData = Db::getInstance()->escapeData($dataForAuthent);
         $usersObj = new Users;
-        $selectPasswordByLogin = $usersObj->selectPasswordByLogin($escapeData['login'], $escapeData['pass']);
-        return $selectPasswordByLogin;
+        $selectedPasswordByLogin = $usersObj->selectPasswordByLogin($ulogin);
+        return $selectedPasswordByLogin;
     }
 
 }
