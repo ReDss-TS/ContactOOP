@@ -35,9 +35,8 @@ class Pagination
         $contactObj = new Contacts;
         //number of records in ContactList table
         $numberOfRecords = $contactObj->selectCountFromContactList();
-        foreach ($numberOfRecords[0] as $key => $value) {
             //total pages
-            $this->numberOfPages = ceil($value / $this->resultsPerPage);
+            $this->numberOfPages = ceil($numberOfRecords[0]['amt'] / $this->resultsPerPage);
         }
     }
 

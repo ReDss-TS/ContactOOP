@@ -197,7 +197,7 @@ class Contacts
     public function selectCountFromContactList()
     {
         $userId = $this->getUserID();
-        $selectQuery = "SELECT COUNT(contact_list.id) 
+        $selectQuery = "SELECT COUNT(contact_list.id) AS amt 
                         FROM contact_list, contact_phones 
                             WHERE contact_list.id          = contact_phones.contactId 
                             AND contact_list.userId        = $userId
