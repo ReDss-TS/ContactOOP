@@ -6,12 +6,11 @@ class Registration
     {   
         $msg = [];
         $upass = md5(trim($upass));
-        $selectedLogin = $this->createSelectLoginQuery($ulogin, $upass);
-        $insertedUser = $this->createInsertUserQuery($ulogin, $upass);
-
-        if ($selectedLogin->num_rows > 0) {
+        $selectedLogin = $this->createSelectLoginQuery($ulogin);
+        if (is_array($selectedLogin)) {
             $msg['msg'] = 'login is busy! Please enter another login';
         } else {
+            $insertedUser = $this->createInsertUserQuery($ulogin, $upass);
             if ($insertedUser === true) {
                 $msg['msg'] = 'You have successfully registered!';
             } else {
@@ -21,29 +20,16 @@ class Registration
         return $msg;
     }
 
-    private function dataEscape($ulogin, $upass)
+    private function createSelectLoginQuery($ulogin)
     {
-        $dataForAuthent = array();
-        $dataForAuthent['login'] = $ulogin;
-        $dataForAuthent['pass'] = $upass;
-        $escapeData = Db::getInstance()->escapeData($dataForAuthent);
-        return $escapeData;
-    }
-
-
-    private function createSelectLoginQuery($ulogin, $upass)
-    {
-        $escapeData = $this->dataEscape($ulogin, $upass);
         $usersObj = new Users;
-        $selectedPasswordByLogin = $usersObj->selectPasswordByLogin($escapeData['login']);
-        return $selectedPasswordByLogin;
+        return $usersObj->selectPasswordByLogin($ulogin);
     }
 
     private function createInsertUserQuery($ulogin, $upass)
     {
-        $escapeData = $this->dataEscape($ulogin, $upass);
         $usersObj = new Users;
-        $insertUserIntoDB = $usersObj->insertUserIntoDB($escapeData['login'], $escapeData['pass']);
+        $insertUserIntoDB = $usersObj->insertUserIntoDB($ulogin, $upass);
         return $insertUserIntoDB;
     }
 }

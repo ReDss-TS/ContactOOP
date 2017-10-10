@@ -122,8 +122,10 @@ class Contacts
 
     public function deleteFromContactList($idLine)
     {
+        $forEscape['idLine'] = $lineId;
+        $escapedData = Db::getInstance()->escapeData($forEscape);
         $userId = $this->getUserID();
-        return Db::getInstance()->delete("DELETE FROM contact_list WHERE id = '" . $idLine . "' AND userId = '" . $userId . "'");
+        return Db::getInstance()->delete("DELETE FROM contact_list WHERE id = '" . $escapedData['idLine'] . "'AND userId = '" . $userId . "'");
     }
 
     public function selectAllData($idLine)
