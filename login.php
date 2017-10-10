@@ -1,14 +1,15 @@
 <?php
+include 'index.php';
 
-include_once 'includes/initialFunc.php';
+// include_once 'includes/initialFunc.php';
 
-$loginPage = '';
+// $loginPage = '';
 
-$loginPage .= Pages::getInstance()->loginPage('login');
+// $loginPage .= Pages::getInstance()->loginPage('login');
 
-$sessions = new Sessions;
+// $sessions = new Sessions;
 
-$sessions->unsetMessages();
-$bodyPage .= $loginPage;
+// $sessions->unsetMessages();
+// $bodyPage .= $loginPage;
 
-include_once 'includes/body.php';
+// include_once 'includes/body.php';

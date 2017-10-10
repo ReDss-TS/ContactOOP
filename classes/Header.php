@@ -23,10 +23,10 @@ class Header
     public function headBtn($page)
     {
         $btn = '';
-        $HeaderBtn = new StructureForm;
+        $headerBtn = new FormStructure;
         foreach ($this->btns as $key => $value) {
             if ($key == mb_strtolower($page)){
-                $btn = $HeaderBtn->createHeaderBtn($value);
+                $btn = $headerBtn->createHeaderBtn($value);
             }
         }
         return $btn;

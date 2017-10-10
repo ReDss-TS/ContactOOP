@@ -1,6 +1,6 @@
 <?php
 
-class StructureForm
+class FormStructure extends Forms
 {
     public $actionsForm = [
             //headerForm  => actionFile
@@ -34,15 +34,6 @@ class StructureForm
                 </form>
             </div>";
         return $structureForPage;
-    }
-
-    private function getActions($actions, $head)
-    {
-        foreach ($actions as $key => $value) {
-            if ($key == $head) {
-                return $value;
-            }
-        }
     }
 
     public function createTable($tableHeader, $tableData)

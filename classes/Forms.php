@@ -4,6 +4,9 @@ abstract class Forms
 {
     protected $elementsOfForm = [];
 
+    protected $actionsForm = [];
+    protected $actionsBtn = [];
+
     protected $htmlFieldForInput = '';
 
     //abstract protected function buildForm($inputValues, $numRadio, $listWithErrors);
@@ -22,5 +25,14 @@ abstract class Forms
     public function getHtmlFieldForInput()
     {
         return $this->htmlFieldForInput;
+    }
+    
+    protected function getActions($actions, $head)
+    {
+        foreach ($actions as $key => $value) {
+            if ($key == $head) {
+                return $value;
+            }
+        }
     }
 }

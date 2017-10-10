@@ -35,7 +35,7 @@ class Table
     public function tableData($data)
     {
         $Contacts = '';
-        $Btn = new StructureForm;
+        $Btn = new FormStructure;
         if (!empty($data)) {
             foreach ($data as $key => $value) {
                 $Contacts .= "
