@@ -1,13 +1,13 @@
 <?php
 
-class LoginForm extends Forms
+class RegisterForm extends Forms
 {
     //elements for html form
     protected $elements  = [
-            'header'     => 'Login',
-            'actionFile' => 'Login',
-            'submitBtn'  => 'Enter',
-            'backBtn'    => 'Register'
+            'header'     => 'Register',
+            'actionFile' => 'Register',
+            'submitBtn'  => 'Register',
+            'backBtn'    => 'Login'
     ];
 
     //structure of the input field

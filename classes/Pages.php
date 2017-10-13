@@ -98,7 +98,6 @@ class Pages
 
     public function login()
     {
-        $listWithInputError = '';
         $sessions = new Sessions;
 
         if (isset($_POST['EnterBtn'])) {
@@ -109,41 +108,33 @@ class Pages
             header("Location: index.php");
         }
 
-        $formForLogin = new FormForLogin();
-        $form = $formForLogin->buildForm($listWithInputError);
+        //LoginForm must accept parameter
+        //looks like data[inputData, validateList]
+        $loginForm = new LoginForm('');
+        $form = $loginForm->render();
 
-        $structureForm = new FormStructure;
-        foreach ($this->elementsForForm as $key => $value) {
-            if ($key == 'login') {
-                $loginPage = $structureForm->createStructureForm($value['header'], $form, $value['rightBtn'], $value['leftBtn']);
-            }
-        }
-        return $loginPage;
+        return $form;
     }
 
     public function register()
     {
-        $listWithInputError = '';
+        $formData['data'] = '';
+        $formData['validate'] = '';
         $sessions = new Sessions;
-
         if (isset($_POST['RegisterBtn'])) {
-            $listWithInputError = $this->registration();
+            $formData['validate'] = $this->registration();
         }
 
         if ($sessions->issetLogin() == true) {
             header("Location: index.php");
         }
 
-        $formForLogin = new FormForLogin();
-        $form = $formForLogin->buildForm($listWithInputError);
+        //RegisterForm must accept parameter
+        //looks like data[inputData, validateList]
+        $registerForm = new RegisterForm($formData);
+        $form = $registerForm->render();
 
-        $structureForm = new FormStructure;
-        foreach ($this->elementsForForm as $key => $value) {
-            if ($key == 'register') {
-                $loginPage = $structureForm->createStructureForm($value['header'], $form, $value['rightBtn'], $value['leftBtn']);
-            }
-        }
-        return $loginPage;
+        return $form;
     }
 
     private function authentication()
@@ -209,7 +200,6 @@ class Pages
         return $page;
     }
 
-    //TODO
     public function update()
     {
         $this->requireLogin();

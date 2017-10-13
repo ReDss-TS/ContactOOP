@@ -23,7 +23,7 @@ class Header
     public function headBtn($page)
     {
         $btn = '';
-        $headerBtn = new FormStructure;
+        $headerBtn = new FormStructure('');
         foreach ($this->btns as $key => $value) {
             if ($key == mb_strtolower($page)){
                 $btn = $headerBtn->createHeaderBtn($value);
