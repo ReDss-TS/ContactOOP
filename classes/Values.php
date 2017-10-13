@@ -93,13 +93,9 @@ class Values
 
     public function getValuesForUpdate($idLine)
     {
-        $forEscape = [];
-        $forEscape['idLine'] = $idLine;
-        $escapeData = Db::getInstance()->escapeData($forEscape);
-
         $contactsObj =  new Contacts;
-        $selectedData = $contactsObj->selectAllData($escapeData['idLine']);
-        $selectedPhones = $contactsObj->selectPhones($escapeData['idLine']);
+        $selectedData = $contactsObj->selectAllData($idLine);
+        $selectedPhones = $contactsObj->selectPhones($idLine);
 
         $phonesObj =  new Phones;
         $phones = $phonesObj->sortPhonesByType($selectedPhones);

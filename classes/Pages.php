@@ -88,8 +88,8 @@ class Pages
 
     private function requireLogin()
     {
-        //TODO
-        $isSignIn = true;
+        $signIn = new Sessions;
+        $isSignIn = $signIn->issetLogin();
         if (!$isSignIn == true) {
             header("Location: login.php");
         }

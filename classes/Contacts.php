@@ -130,12 +130,16 @@ class Contacts
 
     public function selectAllData($idLine)
     {
+        $forEscape = [];
+        $forEscape['idLine'] = $idLine;
+        $escapedData = Db::getInstance()->escapeData($forEscape);
+
         $userId = $this->getUserID();
         $selectQuery = "SELECT contact_list.id, contact_list.firstName, contact_list.lastName, contact_list.email, contact_list.favoritePhone, contact_address.address1, contact_address.address2, contact_address.city, contact_address.state, contact_address.zip, contact_address.country, contact_address.birthday 
                 FROM contact_list 
                     INNER JOIN contact_address 
                         ON contact_list.id = contact_address.contactId
-                            WHERE contact_list.userId = '" . $userId . "' AND contact_list.id = '" . $idLine . "'";
+                            WHERE contact_list.userId = '" . $userId . "' AND contact_list.id = '" . $escapedData['idLine'] . "'";
 
         $resultSelect = Db::getInstance()->selectFromDB($selectQuery);
         return $resultSelect;
@@ -143,10 +147,14 @@ class Contacts
 
     public function selectPhones($idLine)
     {
+        $forEscape = [];
+        $forEscape['idLine'] = $idLine;
+        $escapedData = Db::getInstance()->escapeData($forEscape);
+        
         $userId = $this->getUserID();
         $selectQuery = "SELECT contact_phones.phone, contact_phones.phoneType 
                             FROM contact_phones 
-                                WHERE contact_phones.contactId = '" . $idLine . "'";
+                                WHERE contact_phones.contactId = '" . $escapedData['idLine'] . "'";
 
         $resultSelect = Db::getInstance()->selectFromDB($selectQuery);
         return $resultSelect;
