@@ -65,20 +65,16 @@ class Pages
         $paginationObj = new Pagination;
         $paginationObj->createPagination();
         
-        
-        $data = new Table();
-        $tableHeaders = $data->tableHeaders();
         $ContactObj = new Contacts();
         $selectDataForMainPage = $ContactObj->selectDataForMainPage($this->pageFirstResult, $this->resultsPerPage);
 
         $filter = new Filters();
-        //$sanitizeDate = $filter->sanitizeSpecialCharsInMultiArrays($selectDataForMainPage);
         $sanitizeDate = $filter->sanitizeSpecialChars($selectDataForMainPage);
 
-        $tableForData = new FormStructure;
-        $DataTable = $tableForData->createTable($tableHeaders, $sanitizeDate);
+        $table = new MainTable();
+        $renderedTable = $table->renderTable($sanitizeDate);
 
-        $bodyPage .= $DataTable;
+        $bodyPage .= $renderedTable;
 
         $pagination =  $paginationObj->getPagination();
         $bodyPage .= $pagination;
@@ -228,10 +224,10 @@ class Pages
             }
         }
 
-        $formForAddContacts = new FormForInsert();
+        $formForAddContacts = new FormForInsert('');
         $form = $formForAddContacts->buildForm($this->inputValues, $this->selectedRadio, $this->listWithInputError);
 
-        $structureForm = new FormStructure;
+        $structureForm = new FormStructure('');
         foreach ($this->elementsForForm as $key => $value) {
             if ($key == 'update') {
                 $page = $structureForm->createStructureForm($value['header'], $form, $value['rightBtn'], $value['leftBtn']);
