@@ -54,17 +54,18 @@ abstract class Forms
     //         ]
     // ];
 
-    //array with input data and results of validation
-    private $data = [];
+   
+    //array with input data and results of validation and radioButtons;
+    protected $data = [];
+    //array with keys to be contained in $data;
+    protected $dataKeys = [
+        'data',
+        'validate',
+        'radio'
+    ];
 
     function __construct($formData) {
-        if (!empty($formData)) {
-            $this->data = $formData;
-        } else {
-            $this->data['data'] = '';
-            $this->data['validate'] = '';
-        }
-        
+        $this->data = $formData;       
     }
 
     public function startForm()
@@ -90,15 +91,18 @@ abstract class Forms
 
     public function renderInput($name, $label, $typeOfInput)
     {
-        $inputData = (!empty($this->data['data'])) ? $this->data['data'][$name] : '';
-        $validateData = (!empty($this->data['validate'])) ? $this->data['validate'][$name] : '';
-        
+        foreach ($this->dataKeys as $value) {
+            $parameters[$value] = (isset($this->data[$value])) ? $this->data[$value][$name] : '';
+        }
+        $radioBtn = (method_exists(get_class($this), 'renderRadioBtn')) ? $this->renderRadioBtn($name, $parameters['radio']) : '';
+
         $input = "<div class = \"field\">
-                        <label for ='$name'>$label:</label>
-                        <input class = \"text\" id = '$name' name = '$name' type = '$typeOfInput' $inputData />
-                        <br/>
-                        $validateData
-                        </div>";
+                    <label for ='$name'>$label:</label>
+                    $radioBtn
+                    <input class = \"text\" id = '$name' name = '$name' type = '$typeOfInput' " . $parameters['data'] . " />
+                    <br/>
+                    " . $parameters['validate'] . "
+                    </div>";
         return $input;
     }
 

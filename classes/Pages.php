@@ -114,8 +114,7 @@ class Pages
 
     public function register()
     {
-        $formData['data'] = '';
-        $formData['validate'] = '';
+        $formData = [];
         $sessions = new Sessions;
         if (isset($_POST['RegisterBtn'])) {
             $formData['validate'] = $this->registration();
@@ -167,6 +166,7 @@ class Pages
     public function insert()
     {   
         $this->requireLogin();
+
         if (isset($_POST['AddBtn'])) {
             $contacts = new Contacts;
             $labelsOfContact = $contacts->getLabelsOfContact();
@@ -183,17 +183,20 @@ class Pages
             }
         }
 
-        $formForAddContacts = new FormForInsert();
-        $form = $formForAddContacts->buildForm($this->inputValues, $this->selectedRadio, $this->listWithInputError);
-
-        $structureForm = new FormStructure;
-        foreach ($this->elementsForForm as $key => $value) {
-            if ($key == 'insert') {
-                $page = $structureForm->createStructureForm($value['header'], $form, $value['rightBtn'], $value['leftBtn']);
+        $formData['data'] = $this->inputValues;
+        $formData['validate'] = $this->listWithInputError;
+        $formData['radio'] = $this->selectedRadio;
+        
+        foreach ($formData as $key => $value) {
+            if (empty($value)) {
+                unset($formData[$key]);
             }
         }
+        $AddContactForm = new AddContactForm($formData);
+        $form = $AddContactForm->render();
+        //$form = $formForAddContacts->buildForm($this->inputValues, $this->selectedRadio, $this->listWithInputError);
 
-        return $page;
+        return $form;
     }
 
     public function update()

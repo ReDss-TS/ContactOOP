@@ -9,7 +9,11 @@ class Values
     {
         $inputValues = [];
         foreach ($labelsOfContact as $key => $value) {
-            $inputValues[] = $_POST[$value];
+            if (isset($_POST[$value])) {
+                $inputValues[] = $_POST[$value];
+            } else {
+                $inputValues[] = '';
+            }
         }
         return $inputValues;
     }
