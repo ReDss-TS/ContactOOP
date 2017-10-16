@@ -2,12 +2,14 @@
 
 class Header
 {
-    public $title = [
+    protected $title = [
         'index.php'    => 'Main Page',
         'login.php'    => 'Login Page',
-        'register.php' => 'Registration Page'
+        'register.php' => 'Registration Page',
+        'insert.php'   => 'Add contacts Page',
+        'update.php'   => 'Edit contacts Page'
     ];
-    public $btns = [
+    protected $btns = [
         'index.php' => [
             'action'  => 'index.php',
             'href'    => 'insert.php',
@@ -17,16 +19,20 @@ class Header
             'action'  => 'insert.php',
             'href'    => 'index.php',
             'btnName' => 'Data'
+        ],
+        'update.php' => [
+            'action'  => 'update.php',
+            'href'    => 'index.php',
+            'btnName' => 'Data'
         ]
     ];
    
     public function headBtn($page)
     {
         $btn = '';
-        $headerBtn = new FormStructure('');
         foreach ($this->btns as $key => $value) {
             if ($key == mb_strtolower($page)){
-                $btn = $headerBtn->createHeaderBtn($value);
+                $btn = $this->createHeaderBtn($value);
             }
         }
         return $btn;
@@ -41,5 +47,13 @@ class Header
             }
         }
         return $title;
+    }
+
+    private function createHeaderBtn($btn)
+    {
+        return "<form method = \"post\" action = " . $btn['action'] . ">
+                <a href = " . $btn['href'] . " class = \"button\">" . $btn['btnName'] . "</a>
+                <a href = \"logout.php\" class = \"button\">Logout</a>
+                </form>";
     }
 }

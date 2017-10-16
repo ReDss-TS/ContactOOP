@@ -183,18 +183,10 @@ class Pages
             }
         }
 
-        $formData['data'] = $this->inputValues;
-        $formData['validate'] = $this->listWithInputError;
-        $formData['radio'] = $this->selectedRadio;
+        $formData = $this->createFormData();
         
-        foreach ($formData as $key => $value) {
-            if (empty($value)) {
-                unset($formData[$key]);
-            }
-        }
-        $AddContactForm = new AddContactForm($formData);
-        $form = $AddContactForm->render();
-        //$form = $formForAddContacts->buildForm($this->inputValues, $this->selectedRadio, $this->listWithInputError);
+        $addContactForm = new AddContactForm($formData);
+        $form = $addContactForm->render();
 
         return $form;
     }
@@ -227,16 +219,25 @@ class Pages
             }
         }
 
-        $formForAddContacts = new FormForInsert('');
-        $form = $formForAddContacts->buildForm($this->inputValues, $this->selectedRadio, $this->listWithInputError);
+        $formData = $this->createFormData();
 
-        $structureForm = new FormStructure('');
-        foreach ($this->elementsForForm as $key => $value) {
-            if ($key == 'update') {
-                $page = $structureForm->createStructureForm($value['header'], $form, $value['rightBtn'], $value['leftBtn']);
+        $updateContactForm = new UpdateContactForm($formData);
+        $form = $updateContactForm->render();
+
+        return $form;
+    }
+
+    private function createFormData()
+    {
+        $formData['data'] = $this->inputValues;
+        $formData['validate'] = $this->listWithInputError;
+        $formData['radio'] = $this->selectedRadio;
+        foreach ($formData as $key => $value) {
+            if (empty($value)) {
+                unset($formData[$key]);
             }
         }
-        return $page;
+        return $formData;
     }
 
     public function setProperties($listWithInputError, $inputValues, $selectedRadio)
