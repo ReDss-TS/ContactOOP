@@ -57,32 +57,44 @@ class Pages
         return self::$instance;
     }
 
-    public function mainPage()
+    public function index()
     {
         $bodyPage = '';
-        $data = new Table();
-        $tableHeaders = $data->tableHeaders();
+        $this->requireLogin();
+
+        $paginationObj = new Pagination;
+        $paginationObj->createPagination();
+        
         $ContactObj = new Contacts();
         $selectDataForMainPage = $ContactObj->selectDataForMainPage($this->pageFirstResult, $this->resultsPerPage);
 
         $filter = new Filters();
-        $sanitizeDate = $filter->sanitizeSpecialCharsInMultiArrays($selectDataForMainPage);
+        $sanitizeDate = $filter->sanitizeSpecialChars($selectDataForMainPage);
 
-        $tableForData = new StructureForm;
-        $DataTable = $tableForData->createTable($tableHeaders, $sanitizeDate);
+        $table = new MainTable();
+        $renderedTable = $table->renderTable($sanitizeDate);
 
-        $bodyPage .= $DataTable;
+        $bodyPage .= $renderedTable;
+
+        $pagination =  $paginationObj->getPagination();
+        $bodyPage .= $pagination;
+
         return $bodyPage;
     }
 
-    public function loginPage($link)
+    private function requireLogin()
     {
-        $listWithInputError = '';
-        $sessions = new Sessions;
-
-        if (isset($_POST['RegisterBtn'])) {
-            $listWithInputError = $this->registration();
+        $signIn = new Sessions;
+        $isSignIn = $signIn->issetLogin();
+        if (!$isSignIn == true) {
+            header("Location: login.php");
         }
+        
+    }
+
+    public function login()
+    {
+        $sessions = new Sessions;
 
         if (isset($_POST['EnterBtn'])) {
             $this->authentication();
@@ -92,16 +104,32 @@ class Pages
             header("Location: index.php");
         }
 
-        $formForLogin = new FormForLogin();
-        $form = $formForLogin->buildForm($listWithInputError);
+        //LoginForm must accept parameter
+        //looks like data[inputData, validateList]
+        $loginForm = new LoginForm('');
+        $form = $loginForm->render();
 
-        $structureForm = new StructureForm;
-        foreach ($this->elementsForForm as $key => $value) {
-            if ($key == $link) {
-                $loginPage = $structureForm->createStructureForm($value['header'], $form, $value['rightBtn'], $value['leftBtn']);
-            }
+        return $form;
+    }
+
+    public function register()
+    {
+        $formData = [];
+        $sessions = new Sessions;
+        if (isset($_POST['RegisterBtn'])) {
+            $formData['validate'] = $this->registration();
         }
-        return $loginPage;
+
+        if ($sessions->issetLogin() == true) {
+            header("Location: index.php");
+        }
+
+        //RegisterForm must accept parameter
+        //looks like data[inputData, validateList]
+        $registerForm = new RegisterForm($formData);
+        $form = $registerForm->render();
+
+        return $form;
     }
 
     private function authentication()
@@ -135,8 +163,10 @@ class Pages
 
     }
 
-    public function insertPage($link)
+    public function insert()
     {   
+        $this->requireLogin();
+
         if (isset($_POST['AddBtn'])) {
             $contacts = new Contacts;
             $labelsOfContact = $contacts->getLabelsOfContact();
@@ -153,22 +183,17 @@ class Pages
             }
         }
 
-        $formForAddContacts = new FormForInsert();
-        $form = $formForAddContacts->buildForm($this->inputValues, $this->selectedRadio, $this->listWithInputError);
+        $formData = $this->createFormData();
+        
+        $addContactForm = new AddContactForm($formData);
+        $form = $addContactForm->render();
 
-        $structureForm = new StructureForm;
-        foreach ($this->elementsForForm as $key => $value) {
-            if ($key == $link) {
-                $page = $structureForm->createStructureForm($value['header'], $form, $value['rightBtn'], $value['leftBtn']);
-            }
-        }
-
-        return $page;
+        return $form;
     }
 
-    //TODO
-    public function updatePage($link)
+    public function update()
     {
+        $this->requireLogin();
         $listWithInputError = '';
         if (isset($_POST['idLine'])) {
             $_SESSION['idLine'] = $_POST['idLine'];
@@ -194,16 +219,25 @@ class Pages
             }
         }
 
-        $formForAddContacts = new FormForInsert();
-        $form = $formForAddContacts->buildForm($this->inputValues, $this->selectedRadio, $this->listWithInputError);
+        $formData = $this->createFormData();
 
-        $structureForm = new StructureForm;
-        foreach ($this->elementsForForm as $key => $value) {
-            if ($key == $link) {
-                $page = $structureForm->createStructureForm($value['header'], $form, $value['rightBtn'], $value['leftBtn']);
+        $updateContactForm = new UpdateContactForm($formData);
+        $form = $updateContactForm->render();
+
+        return $form;
+    }
+
+    private function createFormData()
+    {
+        $formData['data'] = $this->inputValues;
+        $formData['validate'] = $this->listWithInputError;
+        $formData['radio'] = $this->selectedRadio;
+        foreach ($formData as $key => $value) {
+            if (empty($value)) {
+                unset($formData[$key]);
             }
         }
-        return $page;
+        return $formData;
     }
 
     public function setProperties($listWithInputError, $inputValues, $selectedRadio)

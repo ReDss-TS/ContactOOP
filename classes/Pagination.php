@@ -37,7 +37,6 @@ class Pagination
         $numberOfRecords = $contactObj->selectCountFromContactList();
             //total pages
             $this->numberOfPages = ceil($numberOfRecords[0]['amt'] / $this->resultsPerPage);
-        }
     }
 
     private function setActivePage()
@@ -48,7 +47,7 @@ class Pagination
             $this->page = ceil($_GET['page']);
             //if the page is missing then move to 1 page
             if ($this->page > $this->numberOfPages || $this->page < 1) {
-                header("Location: $targetpage?page=1");
+                header("Location: $this->targetpage?page=1");
             }
         }
     }

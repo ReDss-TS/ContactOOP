@@ -1,55 +1,57 @@
 <?php
 
-class Table
+abstract class Table
 {
-    protected $columnNames = array(
-        'firstName' => 'First Name',
-        'lastName'  => 'Last Name',
-        'email'     => 'Email',
-        'phone'     => 'Best phone',
-        'edit'      => 'Edit',
-        'delete'    => 'Delete'
-    );
-
-    protected $tableHeader = '';
     protected $sortingTag = '&#8593;';
+
+    abstract protected function renderData($data);
 
     public function tableHeaders()
     {   
+        $tableHeader = '';
         $orderObj = new Order;
         $sortObj = new Sort;
         $order = $orderObj->getOrder();
         $sort = $sortObj->changeSortBy();
 
         foreach ($this->columnNames as $key => $value) {
-            if ($key == 'edit' || $key == 'delete') {
-                $this->tableHeader .= "<th>$value</th>";
-            } else {
-                $this->sortingTag = ($key == $order && $sort == 'ASC') ? '&#8593;' : (($key == $order && $sort == 'DESC') ? '&#8595;' : '');
-                $this->tableHeader .= "<th><a class=\"columnNames\" href=\"?order=$key&sort=$sort\">$value $this->sortingTag</a></th>";
+            $this->sortingTag = ($key == $order && $sort == 'ASC') ? '&#8593;' : (($key == $order && $sort == 'DESC') ? '&#8595;' : '');
+            $tableHeader .= "<th><a class=\"columnNames\" href=\"?order=$key&sort=$sort\">$value $this->sortingTag</a></th>";
+        }
+        if (isset($this->additionalСolumns)){
+            foreach ($this->additionalСolumns as $key => $value) {
+                $tableHeader .= "<th>$key</th>";
             }
         }
-        return $this->tableHeader;
+
+        return $tableHeader;
     }
 
-    public function tableData($data)
+    public function renderTable($data)
     {
-        $Contacts = '';
-        $Btn = new StructureForm;
-        if (!empty($data)) {
-            foreach ($data as $key => $value) {
-                $Contacts .= "
-                <tr id = " . $value['id'] . ">
-                    <td>" . $value['firstName'] . " </td>
-                    <td>" . $value['lastName'] . " </td>
-                    <td>" . $value['email'] . " </td>
-                    <td>" . $value['phone'] . " </td>
-                    <td>" . $Btn -> createBtn('edit', $value['id']) . " </td>
-                    <td>" . $Btn -> createBtn('delete', $value['id']) . " </td>
-                </tr> ";
-            }
-        }
-        return $Contacts;
+        $headres = $this->tableHeaders();
+        $tableData = $this->renderData($data);
+        $table = "
+            <div class = 'tableBlock' id = 'tableBlock'>
+                <table cellpadding = '10' id = 'table'>
+                    <tr>
+                        $headres
+                    </tr>
+                    $tableData
+                </table>
+            </div>
+            <br/>";
+
+        return $table;
+    }
+
+    public function createBtn($typeBtn, $idLine)
+    {
+        $btn = "<form method = \"post\" action = " . $this->additionalСolumns[$typeBtn] . ".php>
+            <input type= \"hidden\" name = \"idLine\" value = " . $idLine . " />
+            <input class = " . $typeBtn . " Btn type=\"submit\" name = " . $typeBtn . " Btn value = " . $typeBtn . " />
+            </form>";
+        return $btn;
     }
 
 }
