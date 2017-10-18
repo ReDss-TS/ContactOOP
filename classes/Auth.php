@@ -12,7 +12,7 @@ class Auth
 
         $upass = md5($upass);
         $selectedUserData = $this->selectLogin($ulogin, $upass);
-        if (!empty($selectedUserData)) {
+        if (is_array($selectedUserData)) {
                 if ($selectedUserData[0]['pass'] === $upass) {
                     $msg['is_auth'] = true;
                     $msg['user'] = $selectedUserData;

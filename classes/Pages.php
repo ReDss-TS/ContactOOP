@@ -2,28 +2,6 @@
 
 class Pages
 {
-    protected $elementsForForm = [
-            'login' => [
-                'header'   => 'Login',
-                'rightBtn' => 'Enter',
-                'leftBtn'  => 'Register'
-            ],
-            'register' => [
-                'header'   => 'Register',
-                'rightBtn' => 'Register',
-                'leftBtn'  => 'Login'
-            ],
-            'insert' => [
-                'header'   => 'Add Contact',
-                'rightBtn' => 'Add',
-                'leftBtn'  => 'Index'
-            ],
-            'update' => [
-                'header'   => 'Edit',
-                'rightBtn' => 'Done',
-                'leftBtn'  => 'Index'
-            ]
-    ];
     protected $listWithInputError;
     protected $inputValues;
     protected $selectedRadio;
@@ -96,7 +74,7 @@ class Pages
     {
         $sessions = new Sessions;
 
-        if (isset($_POST['EnterBtn'])) {
+        if ($_POST) {
             $this->authentication();
         }
 
@@ -116,7 +94,7 @@ class Pages
     {
         $formData = [];
         $sessions = new Sessions;
-        if (isset($_POST['RegisterBtn'])) {
+        if ($_POST) {
             $formData['validate'] = $this->registration();
         }
 
@@ -163,11 +141,32 @@ class Pages
 
     }
 
+    public function delete()
+    {
+        $this->requireLogin();
+        $delete = new DeleteData;
+        $isDeleted = $delete->deleteContacts($_POST['idLine']);
+
+        $sessions = new Sessions;
+        if ($isDeleted == true) {
+            $sessions->recordMessageInSession('delete', "Record deleted successfully!");
+            header("Location: index.php");
+        } else {
+            $sessions->recordMessageInSession('delete', "Record has not been deleted!");
+        }
+    }
+
+    public function logout()
+    {
+        $exit = new Logout;
+        $exit->goOut();
+    }
+
     public function insert()
     {   
         $this->requireLogin();
 
-        if (isset($_POST['AddBtn'])) {
+        if ($_POST) {
             $contacts = new Contacts;
             $labelsOfContact = $contacts->getLabelsOfContact();
             $valuesObj = new Values;

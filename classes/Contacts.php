@@ -71,9 +71,6 @@ class Contacts
         $lastID = Db::getInstance()->getLastId();
         if (!empty($lastID)) {
             return $lastID;
-        } else {
-            //TODO
-            echo 'Error: getlastID';
         }
     }
 
@@ -106,7 +103,7 @@ class Contacts
         return $resultInsert;
     }
 
-    public function isDone($result) //TODO
+    public function isDone($result)
     {
         $amount = 0;
         foreach ($result as $key => $value) {
@@ -122,7 +119,7 @@ class Contacts
 
     public function deleteFromContactList($idLine)
     {
-        $forEscape['idLine'] = $lineId;
+        $forEscape['idLine'] = $idLine;
         $escapedData = Db::getInstance()->escapeData($forEscape);
         $userId = $this->getUserID();
         return Db::getInstance()->delete("DELETE FROM contact_list WHERE id = '" . $escapedData['idLine'] . "'AND userId = '" . $userId . "'");

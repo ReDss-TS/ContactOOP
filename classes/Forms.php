@@ -2,59 +2,6 @@
 
 abstract class Forms
 {
-    protected $actionsForm = [];
-    protected $actionsBtn = [];
-
-    protected $htmlFieldForInput = '';
-
-    //abstract protected function buildForm($inputValues, $numRadio, $listWithErrors);
-
-    public function htmlFieldForInput($key, $value, $withRadioBtn, $typeOfInput, $inputValue, $errorLabel) 
-    {
-        $this->htmlFieldForInput .= "<div class = \"field\">
-                        <label for =\"$key\">$value:</label>
-                        $withRadioBtn
-                        <input class = \"text\" id = '" . $key . "' name = \"$key\" type = \"$typeOfInput\" $inputValue />
-                        <br/>
-                        $errorLabel
-                        </div>";
-    }
-
-    public function getHtmlFieldForInput()
-    {
-        return $this->htmlFieldForInput;
-    }
-
-    //______________________________________________
-
-    // protected $elementsForForm = [
-    //         'login' => [
-    //             'header'     => 'Login',
-    //             'actionFile' => 'Login',
-    //             'submitBtn'  => 'Enter',
-    //             'backBtn'    => 'Register'
-    //         ],
-    //         'register' => [
-    //             'header'     => 'Register',
-    //             'actionFile' => 'Login',
-    //             'submitBtn'  => 'Register',
-    //             'backBtn'    => 'Login'
-    //         ],
-    //         'insert' => [
-    //             'header'     => 'Add Contact',
-    //             'actionFile' => 'Login',
-    //             'submitBtn'  => 'Add',
-    //             'backBtn'    => 'Index'
-    //         ],
-    //         'update' => [
-    //             'header'     => 'Edit',
-    //             'actionFile' => 'Login',
-    //             'submitBtn'  => 'Done',
-    //             'backBtn'    => 'Index'
-    //         ]
-    // ];
-
-   
     //array with input data and results of validation and radioButtons;
     protected $data = [];
     //array with keys to be contained in $data;
@@ -92,14 +39,17 @@ abstract class Forms
     public function renderInput($name, $label, $typeOfInput)
     {
         foreach ($this->dataKeys as $value) {
-            $parameters[$value] = (isset($this->data[$value])) ? $this->data[$value][$name] : '';
+            $parameters[$value] = (isset($this->data[$value][$name])) ? $this->data[$value][$name] : '';
+            if ($value == 'radio') {
+                $parameters[$value] = (isset($this->data[$value])) ? $this->data[$value] : '';
+            }
         }
         $radioBtn = (method_exists(get_class($this), 'renderRadioBtn')) ? $this->renderRadioBtn($name, $parameters['radio']) : '';
 
         $input = "<div class = \"field\">
                     <label for ='$name'>$label:</label>
                     $radioBtn
-                    <input class = \"text\" id = '$name' name = '$name' type = '$typeOfInput' " . $parameters['data'] . " />
+                    <input class = \"text\" id = '$name' name = '$name' type = '$typeOfInput' value=\"" . $parameters['data'] . "\" />
                     <br/>
                     " . $parameters['validate'] . "
                     </div>";

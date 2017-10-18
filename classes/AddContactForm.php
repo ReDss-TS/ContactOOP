@@ -84,8 +84,15 @@ class AddContactForm extends Forms
             '2' => 'user_wPhone',
             '3' => 'user_cPhone'
     ];
-    
-    //input data: name input field, number selected radioBtn
+
+    /**
+      * render radioButton
+      *
+      * @param string $name With a name input field
+      *        int $checkedPhone With number of checked radioButton
+      *
+      * @return string $formRadio With HTML input tags
+      */
     protected function renderRadioBtn($name, $checkedPhone)
     {
         $formRadio = '';
