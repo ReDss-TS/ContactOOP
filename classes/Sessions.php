@@ -23,10 +23,11 @@ class Sessions
                 $messages .= "<label class = \"msg\">$value</label><br/>";
             }
         }
+        $this->unsetMessages();
         return $messages;
     }
 
-    public function unsetMessages()
+    private function unsetMessages()
     {
         unset($_SESSION['message']);
     }
